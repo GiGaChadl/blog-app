@@ -1,0 +1,67 @@
+<section class="about-hero">
+  <div class="container about-hero__inner">
+    <span class="eyebrow">Về tác giả</span>
+    <h1>Xin chào, tôi là người viết trang này.</h1>
+    <p class="about-hero__intro">
+      {{ contact().about || contact().bio || 'Tôi lập blog này để lưu lại những gì mình học được — không phải để dạy ai, mà để chính mình nhìn lại rõ hơn. Nếu vài dòng ở đây giúp ích được cho bạn, đó là điều tôi mừng nhất.' }}
+    </p>
+  </div>
+</section>
+
+<section class="section about-projects">
+  <div class="container">
+    <span class="eyebrow">Đã từng làm</span>
+    <h2>Vài Dự Án Nhỏ</h2>
+
+    <div class="project-grid" *ngIf="projects().length; else noProjects">
+      <article class="project-card" *ngFor="let project of projects()">
+        <div class="project-card__media">
+          <img [src]="project.imageUrl" [alt]="project.title" loading="lazy" />
+        </div>
+        <span class="project-card__tag">{{ project.tag }}</span>
+        <h3>{{ project.title }}</h3>
+        <p>{{ project.shortDescription }}</p>
+      </article>
+    </div>
+
+    <ng-template #noProjects>
+      <p class="text-muted">Danh sách dự án đang được cập nhật.</p>
+    </ng-template>
+  </div>
+</section>
+
+<section class="section about-contact">
+  <div class="container about-contact__inner">
+    <div>
+      <span class="eyebrow">Liên hệ</span>
+      <h2>Nói Chuyện Với Tôi</h2>
+      <p class="about-contact__desc">
+        {{ contact().bio || 'Thông tin liên hệ dưới đây được cập nhật trực tiếp từ trang quản trị — nếu có gì thay đổi, đây luôn là nguồn chính xác nhất.' }}
+      </p>
+    </div>
+
+    <dl class="contact-list">
+      <div class="contact-item" *ngIf="contact().email">
+        <dt><i class="pi pi-envelope"></i> Email</dt>
+        <dd><a [href]="'mailto:' + contact().email">{{ contact().email }}</a></dd>
+      </div>
+      <div class="contact-item" *ngIf="contact().phone">
+        <dt><i class="pi pi-phone"></i> Điện thoại</dt>
+        <dd><a [href]="'tel:' + contact().phone">{{ contact().phone }}</a></dd>
+      </div>
+      <div class="contact-item" *ngIf="contact().location">
+        <dt><i class="pi pi-map-marker"></i> Vị trí</dt>
+        <dd>{{ contact().location }}</dd>
+      </div>
+      <div class="contact-item" *ngIf="contact().socials.length">
+        <dt><i class="pi pi-share-alt"></i> Mạng xã hội</dt>
+        <dd class="contact-item__socials">
+          <a *ngFor="let s of contact().socials" [href]="s.url" [attr.aria-label]="s.label" target="_blank" rel="noopener">
+            <i class="pi" [ngClass]="s.icon"></i>
+          </a>
+        </dd>
+      </div>
+    </dl>
+  </div>
+</section>
+

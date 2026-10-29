@@ -1,0 +1,36 @@
+<section class="unsub">
+  <div class="container unsub__inner">
+    <span class="eyebrow">Huỷ đăng ký</span>
+    <h1>Huỷ Nhận Bài Viết Mới</h1>
+
+    <ng-container *ngIf="state() !== 'success'; else successBlock">
+      <p class="unsub__desc">
+        Nhập email bạn đã dùng để đăng ký nhận bài viết. Sau khi huỷ, bạn sẽ không nhận thêm email nào từ blog nữa.
+      </p>
+
+      <form class="unsub__form" (ngSubmit)="submit()" novalidate>
+        <input
+          pInputText
+          type="email"
+          placeholder="ban@email.com"
+          [(ngModel)]="email"
+          name="email"
+          [disabled]="state() === 'submitting'"
+        />
+        <button type="submit" class="btn btn--primary" [disabled]="state() === 'submitting'">
+          {{ state() === 'submitting' ? 'Đang xử lý…' : 'Huỷ đăng ký' }}
+        </button>
+      </form>
+
+      <p class="unsub__error" *ngIf="state() === 'error'">{{ errorMsg() }}</p>
+    </ng-container>
+
+    <ng-template #successBlock>
+      <div class="unsub__success">
+        <i class="pi pi-check-circle"></i>
+        <p>Đã huỷ đăng ký cho <strong>{{ email }}</strong>. Bạn sẽ không nhận thêm email nào từ blog nữa.</p>
+        <a routerLink="/" class="btn btn--secondary">Về trang chủ</a>
+      </div>
+    </ng-template>
+  </div>
+</section>

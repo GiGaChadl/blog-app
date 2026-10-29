@@ -1,0 +1,47 @@
+.ad-slot {
+  text-align: center;
+}
+
+.ad-slot__label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  margin-bottom: var(--space-2);
+}
+
+.ad-slot__box {
+  border: 1px dashed var(--color-line);
+  background: var(--color-paper-raised);
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.ad-slot__preview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ad-slot__slot-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-ink-faint);
+}
+
+/* Vị trí trang chủ: dải ngang giữa các khối nổi bật */
+.ad-slot--home-mid .ad-slot__box {
+  min-height: 90px;
+}
+
+@media (max-width: 640px) {
+  .ad-slot--home-mid .ad-slot__box {
+    padding: var(--space-2);
+    min-height: 70px;
+  }
+}

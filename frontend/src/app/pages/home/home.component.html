@@ -1,0 +1,61 @@
+<app-hero-banner
+  [slogan]="activeSlogan() || siteSettings.heroSlogan() || siteSettings.defaultDescription() || 'Ghi lại những gì thật — không chỉnh sửa cho hoàn hảo hơn nó vốn có.'"
+  [author]="siteSettings.authorName() || sloganAuthor()"
+  [banners]="bannerImages().length > 0 ? bannerImages() : undefined"
+></app-hero-banner>
+
+<section class="section featured" aria-labelledby="featured-heading">
+  <div class="container">
+    <div class="featured__head">
+      <span class="eyebrow">Đáng đọc</span>
+      <h2 id="featured-heading">Bài Viết Nổi Bật</h2>
+    </div>
+
+    <p class="text-muted" *ngIf="!isLoadingFeatured() && featuredPosts.length === 0">
+      Chưa có bài viết nổi bật nào.
+    </p>
+
+    <div class="post-grid" *ngIf="featuredPosts.length > 0">
+      <app-post-card
+        *ngFor="let post of featuredPosts.slice(0, 3)"
+        [post]="post"
+      ></app-post-card>
+    </div>
+
+    <!-- Quảng cáo AdSense: Giữa trang chủ -->
+    <div class="featured__ad">
+      <app-ad-slot position="home-mid"></app-ad-slot>
+    </div>
+
+    <div class="post-grid" *ngIf="featuredPosts.length > 3">
+      <app-post-card
+        *ngFor="let post of featuredPosts.slice(3, 6)"
+        [post]="post"
+      ></app-post-card>
+    </div>
+  </div>
+</section>
+
+<section class="section latest" aria-labelledby="latest-heading">
+  <div class="container">
+    <div class="featured__head">
+      <span class="eyebrow">Gần đây</span>
+      <h2 id="latest-heading">Bài Viết Mới Nhất</h2>
+    </div>
+
+    <p class="text-muted" *ngIf="!isLoadingLatest() && latestPosts.length === 0">
+      Chưa có bài viết mới nào.
+    </p>
+
+    <div class="post-grid" *ngIf="latestPosts.length > 0">
+      <app-post-card
+        *ngFor="let post of latestPosts.slice(0, 3)"
+        [post]="post"
+      ></app-post-card>
+    </div>
+
+    <div class="latest__more">
+      <a routerLink="/danh-muc/tat-ca" class="text-link">Xem tất cả bài viết <i class="pi pi-arrow-right"></i></a>
+    </div>
+  </div>
+</section>

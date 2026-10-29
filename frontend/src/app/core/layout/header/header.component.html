@@ -1,0 +1,97 @@
+<header class="site-header" [class.is-scrolled]="isScrolled()">
+  <div class="container site-header__bar">
+    <a routerLink="/" class="site-header__logo" aria-label="Về trang chủ">
+      <img *ngIf="siteSettings.logoUrl()" [src]="siteSettings.logoUrl()" alt="Logo" class="site-header__logo-img" style="height: 32px; width: auto; object-fit: contain; border-radius: 4px;" />
+      <span *ngIf="!siteSettings.logoUrl()" class="site-header__logo-mark">{{ siteSettings.siteMark() }}</span>
+      <span class="site-header__logo-text">{{ siteSettings.siteName() }}</span>
+    </a>
+
+    <nav class="site-header__nav" aria-label="Danh mục">
+      <div
+        class="site-header__nav-item"
+        *ngFor="let parent of categoryTree"
+        (mouseenter)="openMegaMenu(parent.id)"
+        (mouseleave)="closeMegaMenu()"
+      >
+        <a
+          [routerLink]="['/danh-muc', parent.slug]"
+          routerLinkActive="is-active"
+          class="site-header__nav-link"
+        >
+          {{ parent.name }}
+          <i class="pi pi-angle-down" *ngIf="parent.children.length"></i>
+        </a>
+
+        <!-- Mega-menu: danh mục con (cấp 2) mỗi cột, danh mục cháu (cấp 3) liệt kê bên dưới -->
+        <div
+          class="mega-menu"
+          *ngIf="parent.children.length && openMegaMenuId() === parent.id"
+        >
+          <div class="mega-menu__col" *ngFor="let child of parent.children">
+            <a [routerLink]="['/danh-muc', child.slug]" class="mega-menu__col-title">{{ child.name }}</a>
+            <a
+              *ngFor="let grandchild of child.children"
+              [routerLink]="['/danh-muc', grandchild.slug]"
+              class="mega-menu__link"
+            >{{ grandchild.name }}</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="site-header__actions">
+      <app-theme-toggle></app-theme-toggle>
+      <button
+        type="button"
+        class="icon-btn"
+        aria-label="Tìm kiếm bài viết"
+        (click)="toggleSearch()"
+      >
+        <i class="pi pi-search"></i>
+      </button>
+      <a routerLink="/gioi-thieu" class="site-header__about-link">Giới thiệu</a>
+      <button
+        type="button"
+        class="icon-btn site-header__burger"
+        aria-label="Mở menu"
+        (click)="toggleMobileMenu()"
+      >
+        <i class="pi" [ngClass]="isMobileMenuOpen() ? 'pi-times' : 'pi-bars'"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Thanh tìm kiếm mở rộng ngay dưới header -->
+  <div class="site-header__search-panel" *ngIf="isSearchOpen()">
+    <div class="container">
+      <p-iconfield class="search-field">
+        <p-inputicon styleClass="pi pi-search" />
+        <input
+          id="header-search-input"
+          pInputText
+          type="text"
+          placeholder="Tìm bài viết theo tiêu đề…"
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="submitSearch()"
+        />
+      </p-iconfield>
+      <button type="button" class="btn btn--primary btn--sm" (click)="submitSearch()">Tìm</button>
+    </div>
+  </div>
+
+  <!-- Menu mobile: cây 3 cấp dạng list phẳng theo nhóm cha -->
+  <nav class="site-header__mobile-nav" *ngIf="isMobileMenuOpen()" aria-label="Menu di động">
+    <div class="mobile-nav__group" *ngFor="let parent of categoryTree">
+      <a [routerLink]="['/danh-muc', parent.slug]" (click)="toggleMobileMenu()" class="mobile-nav__parent">
+        {{ parent.name }}
+      </a>
+      <a
+        *ngFor="let child of parent.children"
+        [routerLink]="['/danh-muc', child.slug]"
+        (click)="toggleMobileMenu()"
+        class="mobile-nav__child"
+      >{{ child.name }}</a>
+    </div>
+    <a routerLink="/gioi-thieu" (click)="toggleMobileMenu()" class="mobile-nav__parent">Giới thiệu</a>
+  </nav>
+</header>

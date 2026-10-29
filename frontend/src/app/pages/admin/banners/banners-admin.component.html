@@ -1,0 +1,201 @@
+<div class="banners-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Quản Lý Banner</h1>
+      <p class="page-subtitle">Hình ảnh banner nổi bật quảng bá trên trang chủ và đầu trang</p>
+    </div>
+    <div class="header-actions">
+      <button pButton label="Thêm Banner Mới" icon="pi pi-plus" (click)="openCreateDialog()"></button>
+    </div>
+  </div>
+
+  <!-- Banner Standards & Specs Section -->
+  <div class="standards-card">
+    <div class="standards-header">
+      <i class="pi pi-info-circle text-primary"></i>
+      <h3>Quy chuẩn kỹ thuật & Tiêu chuẩn kích thước Banner Trang Chủ</h3>
+    </div>
+    <div class="standards-grid">
+      <div class="standard-item">
+        <div class="item-title"><i class="pi pi-desktop"></i> Kích thước tiêu chuẩn</div>
+        <div class="item-spec">Chuẩn khuyến nghị: <strong>1920 x 600 px</strong> (Tỷ lệ 16:5 hoặc 3:1)</div>
+        <div class="item-desc">Tối thiểu: <strong>1200 x 400 px</strong> để hình ảnh không bị vỡ hạt trên màn hình rộng</div>
+      </div>
+
+      <div class="standard-item">
+        <div class="item-title"><i class="pi pi-database"></i> Khối lượng file tối ưu</div>
+        <div class="item-spec">Dung lượng khuyến nghị: <strong>&lt; 800 KB</strong></div>
+        <div class="item-desc">Giới hạn tối đa hệ thống: <strong>10 MB</strong> (Khuyên dùng ảnh tối ưu hóa để trang chủ tải nhanh)</div>
+      </div>
+
+      <div class="standard-item">
+        <div class="item-title"><i class="pi pi-file-check"></i> Định dạng hỗ trợ</div>
+        <div class="item-spec">Hỗ trợ: <strong>.webp, .jpg, .jpeg, .png</strong></div>
+        <div class="item-desc">Khuyên dùng định dạng WebP hoặc PNG để chất lượng hiển thị văn bản và đồ họa rõ nét</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <p-table [value]="banners()" [loading]="isLoading()" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 160px">Hình ảnh</th>
+          <th>Tiêu đề banner</th>
+          <th>Link chuyển hướng</th>
+          <th style="width: 100px">Thứ tự</th>
+          <th style="width: 130px">Trạng thái</th>
+          <th style="width: 120px; text-align: center">Thao tác</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-banner>
+        <tr>
+          <td>
+            <div class="banner-thumb">
+              <img [src]="banner.imageUrl || banner.mediaUrl" [alt]="banner.title || banner.mediaAltText || 'Banner'" />
+            </div>
+          </td>
+          <td>
+            <span class="font-medium" *ngIf="banner.title || banner.mediaAltText">{{ banner.title || banner.mediaAltText }}</span>
+            <span class="text-color-secondary italic text-sm" *ngIf="!banner.title && !banner.mediaAltText">(Không có tiêu đề)</span>
+          </td>
+          <td>
+            <a *ngIf="banner.targetUrl || banner.linkUrl" [href]="banner.targetUrl || banner.linkUrl" target="_blank" class="target-link">
+              {{ banner.targetUrl || banner.linkUrl }} <i class="pi pi-external-link"></i>
+            </a>
+            <span *ngIf="!banner.targetUrl && !banner.linkUrl" class="text-color-secondary">—</span>
+          </td>
+          <td>{{ banner.sortOrder }}</td>
+          <td>
+            <p-tag [value]="banner.isActive ? 'Đang chạy' : 'Tạm tắt'" [severity]="banner.isActive ? 'success' : 'secondary'"></p-tag>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm" (click)="openEditDialog(banner)"></button>
+              <button pButton icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm" (click)="onDelete(banner)"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center p-5">Chưa có banner nào. Hãy tạo banner đầu tiên!</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Dialog -->
+  <p-dialog
+    [header]="isEditMode() ? 'Chỉnh Sửa Banner' : 'Thêm Banner Mới'"
+    [(visible)]="dialogVisible"
+    [modal]="true"
+    [style]="{ width: '560px', maxWidth: '95vw' }"
+  >
+    <form [formGroup]="form" (ngSubmit)="onSave()" class="dialog-form">
+      <div class="field-group">
+        <label for="bannerTitle">Tiêu đề Banner / Chú thích ảnh (Tùy chọn - có thể để trống)</label>
+        <input pInputText id="bannerTitle" formControlName="title" placeholder="Để trống nếu không cần tiêu đề / chú thích..." class="w-full" />
+        <small class="text-xs text-color-secondary">Không bắt buộc. Nếu để trống, hệ thống sẽ chỉ hiển thị hình ảnh banner.</small>
+      </div>
+
+      <!-- Banner Image Upload Section -->
+      <div class="field-group">
+        <label class="required">Hình ảnh Banner (Chuẩn 1920x600 px)</label>
+        
+        <!-- Preview Box if image exists -->
+        <div class="banner-preview-box" *ngIf="form.get('imageUrl')?.value">
+          <img [src]="form.get('imageUrl')?.value" alt="Banner Preview" class="preview-img" />
+          <button type="button" class="remove-btn" (click)="removeBannerImage()" title="Đổi ảnh khác">
+            <i class="pi pi-times"></i>
+          </button>
+        </div>
+
+        <!-- Action row when no image selected -->
+        <div class="upload-trigger-row" *ngIf="!form.get('imageUrl')?.value">
+          <label class="upload-btn-label" [class.disabled]="isUploadingImage()">
+            <i class="pi pi-spin pi-spinner" *ngIf="isUploadingImage()"></i>
+            <i class="pi pi-upload" *ngIf="!isUploadingImage()"></i>
+            <span>{{ isUploadingImage() ? 'Đang tải ảnh lên...' : 'Tải Ảnh Banner Từ Máy' }}</span>
+            <input type="file" (change)="onBannerFileSelected($event)" accept="image/*" class="hidden-file-input" [disabled]="isUploadingImage()" />
+          </label>
+          <button
+            pButton
+            type="button"
+            label="Chọn Từ Thư Viện Media"
+            icon="pi pi-images"
+            class="p-button-outlined"
+            (click)="openMediaPicker()"
+          ></button>
+        </div>
+
+        <!-- Action buttons when image exists -->
+        <div class="change-image-actions mt-2 flex gap-2" *ngIf="form.get('imageUrl')?.value">
+          <button
+            pButton
+            type="button"
+            label="Tải ảnh khác từ máy"
+            icon="pi pi-upload"
+            class="p-button-outlined p-button-sm"
+            (click)="bannerFileInput.click()"
+          ></button>
+          <button
+            pButton
+            type="button"
+            label="Chọn ảnh khác từ thư viện"
+            icon="pi pi-images"
+            class="p-button-outlined p-button-sm"
+            (click)="openMediaPicker()"
+          ></button>
+        </div>
+        <input #bannerFileInput type="file" (change)="onBannerFileSelected($event)" accept="image/*" style="display: none;" />
+
+        <small class="text-xs text-color-secondary block mt-1">
+          <i class="pi pi-info-circle"></i> Khuyến nghị kích thước 1920x600 px, dung lượng &lt; 800 KB, tối đa 10 MB.
+        </small>
+        <small *ngIf="form.get('imageUrl')?.invalid && form.get('imageUrl')?.touched" class="p-error block mt-1">
+          Vui lòng tải ảnh lên hoặc chọn từ thư viện cho banner.
+        </small>
+      </div>
+
+      <div class="field-group">
+        <label for="bannerTarget">Link liên kết khi click (Target URL)</label>
+        <input pInputText id="bannerTarget" formControlName="targetUrl" placeholder="https://example.com/chuyen-de hoặc /bai-viet/..." class="w-full" />
+      </div>
+
+      <div class="form-row">
+        <div class="field-group flex-1">
+          <label for="bannerOrder">Thứ tự hiển thị (tối thiểu 1)</label>
+          <input pInputText id="bannerOrder" type="number" min="1" formControlName="sortOrder" class="w-full" />
+          <small *ngIf="form.get('sortOrder')?.invalid && form.get('sortOrder')?.touched" class="p-error block mt-1">
+            Thứ tự sắp xếp phải lớn hơn hoặc bằng 1.
+          </small>
+        </div>
+
+        <div class="field-group flex-1 switch-field">
+          <label for="bannerActive" class="field-label">Trạng thái hiển thị</label>
+          <div class="switch-container">
+            <p-inputSwitch formControlName="isActive" inputId="bannerActive"></p-inputSwitch>
+            <label for="bannerActive" class="switch-label cursor-pointer" [class.active]="form.get('isActive')?.value">
+              {{ form.get('isActive')?.value ? 'Đang kích hoạt' : 'Tạm tắt' }}
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button pButton type="button" label="Hủy" class="p-button-text" (click)="dialogVisible = false"></button>
+        <button pButton type="submit" label="Lưu Banner" icon="pi pi-check" [loading]="isSaving()"></button>
+      </div>
+    </form>
+  </p-dialog>
+
+  <app-media-picker-dialog
+    header="Chọn Hình Ảnh Cho Banner"
+    [visible]="showMediaPicker()"
+    (visibleChange)="showMediaPicker.set($event)"
+    (select)="onMediaSelected($event)"
+  ></app-media-picker-dialog>
+</div>

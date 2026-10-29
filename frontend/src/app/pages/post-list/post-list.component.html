@@ -1,0 +1,80 @@
+<section class="list-hero">
+  <div class="container">
+    <span class="eyebrow">{{ currentCategoryName() }}</span>
+    <h1>{{ currentCategoryName() }}</h1>
+  </div>
+</section>
+
+<section class="section list-body">
+  <div class="container list-layout">
+    <!-- Bộ lọc -->
+    <aside class="filters" aria-label="Bộ lọc bài viết">
+      <app-category-sidebar [activeCategorySlug]="categorySlug()"></app-category-sidebar>
+
+      <div class="filters__group">
+        <span class="eyebrow">Lọc theo tag</span>
+        <p-multiselect
+          [options]="allTags()"
+          optionLabel="label"
+          optionValue="value"
+          [(ngModel)]="selectedTagSlugs"
+          (onChange)="onFiltersChange()"
+          placeholder="Chọn tag"
+          display="chip"
+          styleClass="filters__tag-select"
+        ></p-multiselect>
+      </div>
+
+      <div class="filters__group">
+        <span class="eyebrow">Tìm kiếm</span>
+        <p-iconfield>
+          <p-inputicon styleClass="pi pi-search" />
+          <input
+            pInputText
+            type="text"
+            placeholder="Tìm theo tiêu đề…"
+            [(ngModel)]="searchQuery"
+            (ngModelChange)="onFiltersChange()"
+          />
+        </p-iconfield>
+      </div>
+
+      <button
+        type="button"
+        class="btn btn--ghost btn--sm filters__clear"
+        *ngIf="selectedTagSlugs.length || searchQuery || categorySlug() !== 'tat-ca'"
+        (click)="clearFilters()"
+      >
+        <i class="pi pi-times"></i> Xoá tất cả bộ lọc
+      </button>
+    </aside>
+
+    <!-- Kết quả -->
+    <div class="list-results">
+      <p class="list-results__count">
+        {{ totalRecords() }} bài viết
+      </p>
+
+      <div class="post-grid" *ngIf="posts().length; else emptyState">
+        <app-post-card *ngFor="let post of posts()" [post]="post"></app-post-card>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <i class="pi pi-inbox"></i>
+          <h3>Không tìm thấy bài viết phù hợp</h3>
+          <p>Thử bỏ bớt điều kiện lọc hoặc tìm với từ khoá khác.</p>
+          <button type="button" class="btn btn--secondary btn--sm" (click)="clearFilters()">Xoá bộ lọc</button>
+        </div>
+      </ng-template>
+
+      <p-paginator
+        *ngIf="totalRecords() > pageSize"
+        [first]="first()"
+        [rows]="pageSize"
+        [totalRecords]="totalRecords()"
+        (onPageChange)="onPageChange($event)"
+      ></p-paginator>
+    </div>
+  </div>
+</section>

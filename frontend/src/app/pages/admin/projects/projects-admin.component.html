@@ -1,0 +1,182 @@
+<div class="projects-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Quản Lý Dự Án Cá Nhân</h1>
+      <p class="page-subtitle">Quản lý danh sách sản phẩm, dự án và mã nguồn hiển thị trên trang Giới thiệu</p>
+    </div>
+    <div class="header-actions">
+      <button pButton label="Thêm Dự Án Mới" icon="pi pi-plus" (click)="openCreateDialog()"></button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <p-table [value]="projects()" [loading]="isLoading()" responsiveLayout="scroll" styleClass="p-datatable-striped">
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 90px">Ảnh</th>
+          <th>Tên dự án</th>
+          <th style="width: 160px">Thẻ / Công nghệ</th>
+          <th>Mô tả tóm tắt</th>
+          <th style="width: 100px">Thứ tự</th>
+          <th style="width: 120px; text-align: center">Thao tác</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-project>
+        <tr>
+          <td>
+            <div class="project-thumb">
+              <img *ngIf="project.mediaUrl" [src]="project.mediaUrl" [alt]="project.title" />
+              <div *ngIf="!project.mediaUrl" class="no-thumb">
+                <i class="pi pi-image"></i>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="font-semibold">{{ project.title }}</span>
+          </td>
+          <td>
+            <span class="project-tag-badge" *ngIf="project.tag">{{ project.tag }}</span>
+            <span class="text-color-secondary" *ngIf="!project.tag">—</span>
+          </td>
+          <td>
+            <div class="desc-cell">{{ project.shortDescription || 'Chưa có mô tả' }}</div>
+          </td>
+          <td>{{ project.sortOrder }}</td>
+          <td>
+            <div class="action-buttons">
+              <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm" (click)="openEditDialog(project)" title="Chỉnh sửa"></button>
+              <button pButton icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm" (click)="onDelete(project)" title="Xóa"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center p-5">Chưa có dự án nào. Bấm "Thêm Dự Án Mới" để tạo.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Dialog Thêm / Chỉnh Sửa Dự Án -->
+  <p-dialog
+    [header]="isEditMode() ? 'Chỉnh Sửa Dự Án' : 'Thêm Dự Án Mới'"
+    [(visible)]="dialogVisible"
+    [modal]="true"
+    [style]="{ width: '540px' }"
+  >
+    <form [formGroup]="form" (ngSubmit)="onSave()" class="dialog-form">
+      <div class="field-group">
+        <label for="pTitle" class="required">Tên dự án</label>
+        <input pInputText id="pTitle" formControlName="title" placeholder="Ví dụ: BlogApp Clean Architecture" class="w-full" />
+        <small *ngIf="form.get('title')?.invalid && form.get('title')?.touched" class="p-error">
+          Tên dự án là bắt buộc.
+        </small>
+      </div>
+
+      <div class="field-group">
+        <label for="pTag">Thẻ công nghệ / Chuyên mục (Tag)</label>
+        <input pInputText id="pTag" formControlName="tag" placeholder="Ví dụ: .NET 10, Angular, Microservices..." class="w-full" />
+      </div>
+
+      <div class="field-group">
+        <label class="required">Ảnh đại diện dự án</label>
+        
+        <div class="image-upload-box">
+          <input
+            #projectFileInput
+            type="file"
+            accept="image/*"
+            (change)="onProjectImageSelected($event)"
+            style="display: none"
+          />
+          <div class="upload-btn-group flex gap-2" *ngIf="!form.get('mediaUrl')?.value">
+            <button
+              pButton
+              type="button"
+              label="Tải ảnh từ máy"
+              icon="pi pi-upload"
+              class="p-button-outlined flex-1"
+              [loading]="isUploadingImage()"
+              (click)="projectFileInput.click()"
+            ></button>
+            <button
+              pButton
+              type="button"
+              label="Chọn từ thư viện"
+              icon="pi pi-images"
+              class="p-button-outlined flex-1"
+              (click)="openMediaPicker()"
+            ></button>
+          </div>
+
+          <div class="image-preview mt-2" *ngIf="form.get('mediaUrl')?.value">
+            <div class="preview-wrap relative">
+              <img [src]="form.get('mediaUrl')?.value" alt="Xem trước ảnh dự án" />
+              <button type="button" class="remove-btn" (click)="removeProjectImage()" title="Xóa ảnh">
+                <i class="pi pi-times"></i>
+              </button>
+            </div>
+            <div class="change-btns flex gap-2 mt-2">
+              <button
+                pButton
+                type="button"
+                label="Đổi ảnh từ máy"
+                icon="pi pi-upload"
+                class="p-button-outlined p-button-sm flex-1"
+                (click)="projectFileInput.click()"
+              ></button>
+              <button
+                pButton
+                type="button"
+                label="Đổi từ thư viện"
+                icon="pi pi-images"
+                class="p-button-outlined p-button-sm flex-1"
+                (click)="openMediaPicker()"
+              ></button>
+            </div>
+          </div>
+        </div>
+
+        <small *ngIf="form.get('mediaId')?.invalid && form.get('mediaId')?.touched" class="p-error">
+          Vui lòng tải lên hoặc chọn ảnh đại diện cho dự án.
+        </small>
+      </div>
+
+      <div class="field-group">
+        <label for="pDesc">Mô tả ngắn dự án</label>
+        <textarea
+          pInputTextarea
+          id="pDesc"
+          formControlName="shortDescription"
+          rows="3"
+          placeholder="Mô tả công nghệ sử dụng, tính năng nổi bật của sản phẩm..."
+          class="w-full"
+        ></textarea>
+      </div>
+
+      <div class="field-group">
+        <label for="pOrder">Thứ tự hiển thị (tối thiểu 1)</label>
+        <input pInputText id="pOrder" type="number" min="1" formControlName="sortOrder" placeholder="1" class="w-full" />
+        <small class="text-xs text-muted-color">Số nhỏ hơn sẽ hiển thị trước (tối thiểu 1).</small>
+        <small *ngIf="form.get('sortOrder')?.invalid && form.get('sortOrder')?.touched" class="p-error block mt-1">
+          Thứ tự sắp xếp phải lớn hơn hoặc bằng 1.
+        </small>
+      </div>
+
+      <div class="dialog-actions mt-4">
+        <button pButton type="button" label="Hủy" class="p-button-text" (click)="dialogVisible = false"></button>
+        <button pButton type="submit" [label]="isEditMode() ? 'Lưu Thay Đổi' : 'Tạo Dự Án'" icon="pi pi-check" [loading]="isSaving()"></button>
+      </div>
+    </form>
+  </p-dialog>
+
+  <app-media-picker-dialog
+    header="Chọn Hình Ảnh Cho Dự Án"
+    [visible]="showMediaPicker()"
+    (visibleChange)="showMediaPicker.set($event)"
+    (select)="onMediaSelected($event)"
+  ></app-media-picker-dialog>
+</div>

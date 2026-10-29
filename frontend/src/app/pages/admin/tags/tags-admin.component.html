@@ -1,0 +1,95 @@
+<div class="tags-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Quản Lý Thẻ Tags</h1>
+      <p class="page-subtitle">Quản lý từ khóa và thẻ phân loại bài viết</p>
+    </div>
+    <div class="header-actions">
+      <button pButton label="Thêm Thẻ Mới" icon="pi pi-plus" (click)="openCreateDialog()"></button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <p-table [value]="tags()" [loading]="isLoading()" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Tên thẻ</th>
+          <th>Đường dẫn thân thiện (Slug)</th>
+          <th style="width: 150px">Số bài viết</th>
+          <th style="width: 120px; text-align: center">Thao tác</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-tag>
+        <tr>
+          <td>
+            <div class="tag-name-cell">
+              <i class="pi pi-tag text-primary"></i>
+              <span class="font-medium">{{ tag.name }}</span>
+            </div>
+          </td>
+          <td><code class="slug-code">/the/{{ tag.slug }}</code></td>
+          <td>
+            <span class="post-count-badge">{{ tag.postCount || 0 }} bài viết</span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm" (click)="openEditDialog(tag)"></button>
+              <button pButton icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm" (click)="onDelete(tag)"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="text-center p-5">Chưa có thẻ tag nào.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Dialog -->
+  <p-dialog
+    [header]="isEditMode() ? 'Chỉnh Sửa Thẻ' : 'Thêm Thẻ Mới'"
+    [(visible)]="dialogVisible"
+    [modal]="true"
+    [style]="{ width: '420px' }"
+  >
+    <form [formGroup]="tagForm" (ngSubmit)="onSave()" class="dialog-form">
+      <div class="field-group">
+        <label for="tagName" class="required">Tên thẻ tag</label>
+        <input
+          pInputText
+          id="tagName"
+          formControlName="name"
+          (blur)="generateSlug()"
+          placeholder="Ví dụ: TypeScript"
+          class="w-full"
+        />
+        <small *ngIf="tagForm.get('name')?.invalid && tagForm.get('name')?.touched" class="p-error">
+          Tên thẻ là bắt buộc.
+        </small>
+      </div>
+
+      <div class="field-group">
+        <label for="tagSlug" class="required">Đường dẫn (Slug)</label>
+        <input
+          pInputText
+          id="tagSlug"
+          formControlName="slug"
+          placeholder="typescript"
+          class="w-full"
+        />
+        <small *ngIf="tagForm.get('slug')?.invalid && tagForm.get('slug')?.touched" class="p-error">
+          Slug là bắt buộc.
+        </small>
+      </div>
+
+      <div class="dialog-actions">
+        <button pButton type="button" label="Hủy" class="p-button-text" (click)="dialogVisible = false"></button>
+        <button pButton type="submit" label="Lưu" icon="pi pi-check" [loading]="isSaving()"></button>
+      </div>
+    </form>
+  </p-dialog>
+</div>

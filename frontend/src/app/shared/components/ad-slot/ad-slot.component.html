@@ -1,0 +1,17 @@
+<div class="ad-slot" [class]="'ad-slot--' + position" *ngIf="ad() && ad()?.isActive">
+  <span class="ad-slot__label">Quảng cáo</span>
+  <div class="ad-slot__box">
+    <!-- Thẻ Google AdSense chính thức -->
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-client="ca-pub-0000000000000000"
+      [attr.data-ad-slot]="ad()?.adsenseSlotId"
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    ></ins>
+    <div class="ad-slot__preview" *ngIf="ad()?.adsenseSlotId">
+      <span class="ad-slot__slot-label">Google AdSense Unit (Slot: {{ ad()?.adsenseSlotId }})</span>
+    </div>
+  </div>
+</div>

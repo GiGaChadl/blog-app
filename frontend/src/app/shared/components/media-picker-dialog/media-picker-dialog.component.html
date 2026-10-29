@@ -1,0 +1,98 @@
+<p-dialog
+  [header]="header"
+  [visible]="visible"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [style]="{ width: '75vw', maxWidth: '950px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="close()"
+>
+  <div class="media-picker-container">
+    <!-- Top Bar: Search & Upload -->
+    <div class="picker-top-bar">
+      <div class="search-box">
+        <i class="pi pi-search search-icon"></i>
+        <input
+          pInputText
+          type="text"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)"
+          placeholder="Tìm kiếm theo tên file ảnh..."
+          class="search-input"
+        />
+        <button
+          *ngIf="searchQuery()"
+          type="button"
+          class="clear-btn"
+          (click)="searchQuery.set('')"
+          title="Xóa tìm kiếm"
+        >
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <div class="upload-action">
+        <input
+          #fileInput
+          type="file"
+          accept="image/*"
+          style="display: none"
+          (change)="onFileSelected($event)"
+        />
+        <button
+          pButton
+          type="button"
+          label="Tải ảnh mới từ máy"
+          icon="pi pi-upload"
+          class="p-button-primary p-button-sm"
+          [loading]="isUploading()"
+          (click)="fileInput.click()"
+        ></button>
+      </div>
+    </div>
+
+    <!-- Media Grid -->
+    <div class="media-grid-wrapper" [class.loading]="isLoading()">
+      <div *ngIf="isLoading()" class="loading-overlay">
+        <i class="pi pi-spin pi-spinner text-3xl"></i>
+        <span>Đang tải danh sách ảnh...</span>
+      </div>
+
+      <div class="media-grid" *ngIf="filteredMedia().length > 0">
+        <div
+          *ngFor="let m of filteredMedia()"
+          class="media-card-item"
+          (click)="onSelect(m)"
+          title="Nhấn để chọn ảnh này: {{ m.fileName }}"
+        >
+          <div class="thumbnail-wrap">
+            <img [src]="m.fileUrl" [alt]="m.fileName" loading="lazy" />
+          </div>
+          <div class="file-info">
+            <span class="file-name" [title]="m.fileName">{{ m.fileName }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!isLoading() && filteredMedia().length === 0" class="empty-media-msg">
+        <i class="pi pi-images text-4xl text-color-secondary mb-2"></i>
+        <p *ngIf="searchQuery()">Không tìm thấy ảnh nào khớp với từ khóa "{{ searchQuery() }}".</p>
+        <p *ngIf="!searchQuery()">Chưa có hình ảnh nào trong thư viện media. Hãy tải ảnh lên!</p>
+        <button
+          pButton
+          type="button"
+          label="Tải ảnh lên ngay"
+          icon="pi pi-upload"
+          class="p-button-outlined p-button-sm mt-2"
+          (click)="fileInput.click()"
+        ></button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Đóng" class="p-button-text" (click)="close()"></button>
+  </ng-template>
+</p-dialog>

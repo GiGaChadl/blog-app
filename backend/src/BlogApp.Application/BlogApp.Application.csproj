@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlogApp.Domain\BlogApp.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Chỉ cần cho kiểu DbSet<T> dùng trong IApplicationDbContext — Application KHÔNG
+         gọi trực tiếp bất kỳ API nào của Npgsql hay tự config DbContext (đó là việc của
+         Infrastructure). Đây là ngoại lệ thực dụng phổ biến trong Clean Architecture .NET,
+         không vi phạm nguyên tắc vì Application vẫn không biết đang dùng DB gì cụ thể. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

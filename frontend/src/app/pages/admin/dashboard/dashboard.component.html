@@ -1,0 +1,159 @@
+<div class="dashboard-page">
+  <div class="dashboard-header">
+    <div>
+      <h1 class="page-title">Bảng Điều Khiển Tổng Quan</h1>
+      <p class="page-subtitle">Xem tóm tắt hoạt động hệ thống và các nội dung mới nhất</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/admin/posts/new" pButton icon="pi pi-plus" label="Viết Bài Mới"></a>
+    </div>
+  </div>
+
+  <!-- KPI Grid -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon blue">
+        <i class="pi pi-file-edit"></i>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-value">{{ totalPosts() }}</span>
+        <span class="kpi-label">Tổng số bài viết</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon green">
+        <i class="pi pi-eye"></i>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-value">{{ totalViews() | number }}</span>
+        <span class="kpi-label">Lượt xem bài viết</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon orange">
+        <i class="pi pi-clock"></i>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-value">{{ pendingReviewsCount() }}</span>
+        <span class="kpi-label">Đánh giá chờ duyệt</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon purple">
+        <i class="pi pi-envelope"></i>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-value">{{ subscribersCount() }}</span>
+        <span class="kpi-label">Email theo dõi</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <div class="dashboard-content-grid">
+    <!-- Recent Posts -->
+    <div class="content-panel">
+      <div class="panel-header">
+        <h2>Bài Viết Mới Nhất</h2>
+        <a routerLink="/admin/posts" class="view-all-link">Xem tất cả <i class="pi pi-angle-right"></i></a>
+      </div>
+
+      <p-table [value]="recentPosts()" [loading]="isLoading()" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Tiêu đề</th>
+            <th>Chuyên mục</th>
+            <th>Trạng thái</th>
+            <th>Lượt xem</th>
+            <th>Thao tác</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-post>
+          <tr>
+            <td>
+              <span class="font-medium text-900">{{ post.title }}</span>
+            </td>
+            <td>{{ post.categoryName || 'Chưa phân loại' }}</td>
+            <td>
+              <p-tag
+                [value]="(post.status + '').toLowerCase() === 'published' ? 'Đã xuất bản' : 'Đã ẩn'"
+                [severity]="(post.status + '').toLowerCase() === 'published' ? 'success' : 'secondary'"
+              ></p-tag>
+            </td>
+            <td>{{ post.viewCount || 0 | number }}</td>
+            <td>
+              <a [routerLink]="['/admin/posts/edit', post.id]" pButton icon="pi pi-pencil" class="p-button-text p-button-sm"></a>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="text-center p-4">Chưa có bài viết nào.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <!-- Recent Reviews -->
+    <div class="content-panel">
+      <div class="panel-header">
+        <h2>Đánh Giá Cần Duyệt</h2>
+        <a routerLink="/admin/reviews" class="view-all-link">Xem tất cả <i class="pi pi-angle-right"></i></a>
+      </div>
+
+      <p-table [value]="recentReviews()" [loading]="isLoading()" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Người gửi</th>
+            <th>Điểm sao</th>
+            <th>Nhận xét</th>
+            <th>Thao tác</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-review>
+          <tr>
+            <td>
+              <div class="font-medium">{{ review.email || review.authorEmail || 'Độc giả' }}</div>
+              <small class="text-color-secondary" *ngIf="review.postTitle">Bài: {{ review.postTitle }}</small>
+            </td>
+            <td>
+              <span class="rating-stars">
+                <i class="pi pi-star-fill text-yellow-500"></i> {{ review.rating }}/5
+              </span>
+            </td>
+            <td>
+              <div class="comment-text">{{ review.comment || 'Không có nhận xét' }}</div>
+            </td>
+            <td>
+              <div class="flex align-items-center">
+                <button
+                  pButton
+                  type="button"
+                  icon="pi pi-check"
+                  class="p-button-text p-button-success p-button-sm"
+                  title="Duyệt đánh giá này"
+                  (click)="approveReview(review)"
+                ></button>
+                <a
+                  routerLink="/admin/reviews"
+                  pButton
+                  icon="pi pi-external-link"
+                  class="p-button-text p-button-sm ml-1"
+                  title="Đi tới trang kiểm duyệt"
+                ></a>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="4" class="text-center p-4">Không có đánh giá nào chờ duyệt.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>

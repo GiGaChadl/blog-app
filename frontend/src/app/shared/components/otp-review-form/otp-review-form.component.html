@@ -1,0 +1,105 @@
+<div class="review-form">
+  <!-- Trạng thái: đã có session hợp lệ trong ngày -->
+  <div class="review-form__session-badge" *ngIf="step() === 'verified'">
+    <i class="pi pi-verified"></i>
+    Đang đánh giá với email <strong>{{ email }}</strong>
+    <button
+      type="button"
+      class="btn btn--ghost btn--sm"
+      (click)="changeEmail()"
+    >
+      Không phải bạn?
+    </button>
+  </div>
+
+  <div class="review-form__field">
+    <span class="review-form__label">Đánh giá của bạn</span>
+    <app-star-rating
+      [(value)]="rating"
+      [readOnly]="false"
+      size="lg"
+    ></app-star-rating>
+  </div>
+
+  <div class="review-form__field">
+    <span class="review-form__label">Nhận xét</span>
+    <textarea
+      class="review-form__textarea"
+      rows="3"
+      placeholder="Chia sẻ cảm nhận của bạn về bài viết…"
+      [(ngModel)]="comment"
+    ></textarea>
+  </div>
+
+  <!-- Bước 1: chưa xác thực -> cần email + reCAPTCHA -->
+  <ng-container *ngIf="step() === 'write'">
+    <div class="review-form__field">
+      <span class="review-form__label">Email xác thực</span>
+      <input
+        pInputText
+        type="email"
+        placeholder="ban@email.com"
+        [(ngModel)]="email"
+      />
+    </div>
+
+    <p class="review-form__error" *ngIf="errorMsg()">{{ errorMsg() }}</p>
+
+    <button
+      type="button"
+      class="btn btn--primary"
+      [disabled]="sendingOtp()"
+      (click)="requestOtp()"
+    >
+      {{ sendingOtp() ? "Đang gửi mã…" : "Gửi mã xác thực" }}
+    </button>
+  </ng-container>
+
+  <!-- Bước 2: đã gửi OTP, chờ nhập mã -->
+  <ng-container *ngIf="step() === 'otp-sent'">
+    <div class="review-form__field">
+      <span class="review-form__label">Nhập mã OTP đã gửi đến {{ email }}</span>
+      <input
+        pInputText
+        type="text"
+        inputmode="numeric"
+        maxlength="6"
+        placeholder="••••••"
+        class="otp-input"
+        [(ngModel)]="otpCode"
+      />
+    </div>
+
+    <p class="review-form__error" *ngIf="errorMsg()">{{ errorMsg() }}</p>
+
+    <div class="review-form__actions">
+      <button
+        type="button"
+        class="btn btn--primary"
+        [disabled]="verifying()"
+        (click)="verifyOtp()"
+      >
+        {{ verifying() ? "Đang xác thực…" : "Xác thực & gửi đánh giá" }}
+      </button>
+      <button
+        type="button"
+        class="btn btn--ghost btn--sm"
+        (click)="changeEmail()"
+      >
+        Dùng email khác
+      </button>
+    </div>
+  </ng-container>
+
+  <!-- Bước 3: đã xác thực (session còn hiệu lực) -->
+  <ng-container *ngIf="step() === 'verified'">
+    <p class="review-form__error" *ngIf="errorMsg()">{{ errorMsg() }}</p>
+    <button
+      type="button"
+      class="btn btn--primary"
+      (click)="submitWithExistingSession()"
+    >
+      Gửi đánh giá
+    </button>
+  </ng-container>
+</div>

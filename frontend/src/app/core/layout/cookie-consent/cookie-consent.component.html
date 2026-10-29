@@ -1,0 +1,11 @@
+<div class="cookie-toast" *ngIf="isVisible()" role="dialog" aria-label="Thông báo lưu dữ liệu truy cập">
+  <p class="cookie-toast__text">
+    Mình có lưu lại một số thông tin truy cập cơ bản (IP, thời gian, vị trí gần đúng) để cải thiện trang web.
+    Bạn có thể từ chối bất cứ lúc nào —
+    <a routerLink="/chinh-sach-du-lieu">xem chi tiết</a>.
+  </p>
+  <div class="cookie-toast__actions">
+    <button type="button" class="btn btn--ghost btn--sm" (click)="decline()">Từ chối</button>
+    <button type="button" class="btn btn--primary btn--sm" (click)="accept()">Đồng ý</button>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+<div
+  class="star-rating"
+  [class]="'star-rating--' + size"
+  [class.is-interactive]="!readOnly"
+  (mouseleave)="resetHover()"
+  [attr.role]="readOnly ? 'img' : 'radiogroup'"
+  [attr.aria-label]="readOnly ? value + ' trên 5 sao' : 'Chọn số sao đánh giá'"
+>
+  <button
+    *ngFor="let star of stars"
+    type="button"
+    class="star-rating__star"
+    [class.is-filled]="isFilled(star)"
+    [attr.aria-label]="star + ' sao'"
+    [disabled]="readOnly"
+    (click)="select(star)"
+    (mouseenter)="hover(star)"
+  >
+    <i class="pi pi-star-fill"></i>
+  </button>
+</div>

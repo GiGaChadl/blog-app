@@ -1,0 +1,161 @@
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  .page-header {
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: var(--color-ink);
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    .page-subtitle {
+      font-size: 0.875rem;
+      color: var(--color-ink-soft);
+      margin: 0.25rem 0 0 0;
+    }
+  }
+
+  .settings-tabs {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 2px solid var(--color-line);
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-ink-soft);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.15s ease;
+
+      &:hover {
+        color: var(--color-amber);
+      }
+
+      &.active {
+        color: var(--color-amber);
+        border-bottom-color: var(--color-amber);
+      }
+    }
+  }
+
+  .tab-content-panel {
+    background: var(--color-paper-raised);
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    padding: 1.75rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+    .settings-form {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+
+      .form-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+
+        h3 {
+          font-family: var(--font-display);
+          font-size: 1.15rem;
+          font-weight: 500;
+          color: var(--color-ink);
+          margin: 0;
+          padding-bottom: 0.5rem;
+          border-bottom: 1px solid var(--color-line);
+        }
+
+        .section-header-with-action {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-bottom: 0.5rem;
+          border-bottom: 1px solid var(--color-line);
+
+          h3 {
+            border: none;
+            padding: 0;
+          }
+
+          .section-desc {
+            font-size: 0.8rem;
+            color: var(--color-ink-faint);
+            margin: 0.2rem 0 0 0;
+          }
+        }
+      }
+
+      .form-row {
+        display: flex;
+        gap: 1.25rem;
+
+        @media (max-width: 768px) {
+          flex-direction: column;
+        }
+      }
+
+      .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+
+        label {
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: var(--color-ink);
+
+          &.required::after {
+            content: ' *';
+            color: var(--color-margin);
+          }
+        }
+
+        .p-error {
+          color: var(--color-margin);
+          font-size: 0.75rem;
+        }
+
+        &.flex-row-center {
+          flex-direction: row;
+          align-items: center;
+          gap: 0.75rem;
+        }
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 1rem;
+        border-top: 1px solid var(--color-line);
+      }
+    }
+  }
+
+  .dialog-test-mail {
+    p {
+      color: var(--color-ink-soft);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+  }
+}

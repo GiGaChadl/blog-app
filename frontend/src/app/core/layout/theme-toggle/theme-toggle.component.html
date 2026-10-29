@@ -1,0 +1,8 @@
+<button
+  type="button"
+  class="icon-btn theme-toggle"
+  (click)="theme.toggle()"
+  [attr.aria-label]="theme.mode() === 'dark' ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'"
+>
+  <i class="pi" [ngClass]="theme.mode() === 'dark' ? 'pi-sun' : 'pi-moon'"></i>
+</button>

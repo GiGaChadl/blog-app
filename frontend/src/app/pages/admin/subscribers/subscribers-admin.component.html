@@ -1,0 +1,80 @@
+<div class="subscribers-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Quản Lý Người Đăng Ký (Subscribers)</h1>
+      <p class="page-subtitle">Danh sách bạn đọc theo dõi bản tin qua email khi có bài viết mới</p>
+    </div>
+    <div>
+      <button
+        pButton
+        icon="pi pi-refresh"
+        label="Làm mới"
+        class="p-button-outlined p-button-sm"
+        [loading]="isLoading()"
+        (click)="loadSubscribers()"
+      ></button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <p-table
+      [value]="subscribers()"
+      [loading]="isLoading()"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="totalRecords()"
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Địa chỉ Email</th>
+          <th style="width: 140px">Xác nhận</th>
+          <th style="width: 140px">Trạng thái</th>
+          <th style="width: 160px">Ngày đăng ký</th>
+          <th style="width: 100px; text-align: center">Thao tác</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-sub>
+        <tr>
+          <td>
+            <div class="email-cell">
+              <i class="pi pi-envelope text-primary"></i>
+              <span class="font-medium">{{ sub.email }}</span>
+            </div>
+          </td>
+          <td>
+            <p-tag
+              [value]="isConfirmed(sub) ? 'Đã xác nhận' : 'Chưa xác nhận'"
+              [severity]="isConfirmed(sub) ? 'success' : 'warn'"
+            ></p-tag>
+          </td>
+          <td>
+            <p-tag
+              [value]="isActive(sub) ? 'Đang nhận tin' : 'Đã hủy đăng ký'"
+              [severity]="isActive(sub) ? 'info' : 'danger'"
+            ></p-tag>
+          </td>
+          <td>{{ sub.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>
+            <div class="action-buttons">
+              <button
+                pButton
+                icon="pi pi-trash"
+                class="p-button-text p-button-danger p-button-sm"
+                title="Xóa subscriber"
+                (click)="onDelete(sub)"
+              ></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="text-center p-5">Chưa có người đăng ký nhận tin nào.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

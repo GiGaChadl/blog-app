@@ -1,0 +1,130 @@
+<div class="post-list-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Quản Lý Bài Viết</h1>
+      <p class="page-subtitle">Xem, tìm kiếm, chỉnh sửa và tạo bài viết mới trên blog</p>
+    </div>
+    <div class="header-actions">
+      <a routerLink="/admin/posts/new" pButton icon="pi pi-plus" label="Thêm Bài Viết Mới"></a>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="search-box">
+      <span class="p-input-icon-left w-full">
+        <i class="pi pi-search"></i>
+        <input
+          pInputText
+          type="text"
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="onSearch()"
+          placeholder="Tìm theo tiêu đề hoặc tóm tắt..."
+          class="w-full"
+        />
+      </span>
+    </div>
+
+    <div class="filter-dropdowns">
+      <p-dropdown
+        [options]="categories()"
+        [(ngModel)]="selectedCategoryId"
+        (onChange)="onFilterChange()"
+        optionLabel="name"
+        optionValue="id"
+        [showClear]="true"
+        placeholder="Tất cả chuyên mục"
+        styleClass="w-full"
+      ></p-dropdown>
+
+      <button pButton label="Tìm kiếm" icon="pi pi-filter" (click)="onSearch()"></button>
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div class="table-container">
+    <p-table
+      [value]="posts()"
+      [loading]="isLoading()"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="totalRecords()"
+      responsiveLayout="scroll"
+      styleClass="p-datatable-striped"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 80px">Ảnh</th>
+          <th>Tiêu đề bài viết</th>
+          <th>Chuyên mục</th>
+          <th style="width: 140px">Trạng thái</th>
+          <th style="width: 110px">Lượt xem</th>
+          <th style="width: 120px">Đánh giá</th>
+          <th style="width: 140px">Ngày tạo</th>
+          <th style="width: 120px; text-align: center">Thao tác</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-post>
+        <tr>
+          <td>
+            <div class="thumbnail-preview">
+              <img *ngIf="post.thumbnailUrl" [src]="post.thumbnailUrl" [alt]="post.title" />
+              <div *ngIf="!post.thumbnailUrl" class="no-image">
+                <i class="pi pi-image"></i>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="post-title-cell">
+              <span class="title-text">{{ post.title }}</span>
+              <span class="slug-text">/bai-viet/{{ post.slug }}</span>
+            </div>
+          </td>
+          <td>
+            <span class="category-badge">{{ post.categoryName || 'Chưa phân loại' }}</span>
+          </td>
+          <td>
+            <p-tag
+              [value]="(post.status + '').toLowerCase() === 'published' ? 'Đã xuất bản' : 'Đã ẩn'"
+              [severity]="(post.status + '').toLowerCase() === 'published' ? 'success' : 'secondary'"
+            ></p-tag>
+          </td>
+          <td>{{ post.viewCount || 0 | number }}</td>
+          <td>
+            <span class="rating-cell">
+              <i class="pi pi-star-fill text-yellow-500"></i>
+              {{ (post.avgRating ?? post.ratingAverage ?? 0) | number:'1.1-1' }} ({{ post.ratingCount || 0 }})
+            </span>
+          </td>
+          <td>{{ (post.publishedAt || post.createdAt) | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <div class="action-buttons">
+              <button
+                pButton
+                type="button"
+                icon="pi pi-pencil"
+                class="p-button-text p-button-sm"
+                (click)="onEdit(post)"
+                title="Chỉnh sửa"
+              ></button>
+              <button
+                pButton
+                icon="pi pi-trash"
+                class="p-button-text p-button-danger p-button-sm"
+                (click)="onDelete(post)"
+                title="Xóa bài viết"
+              ></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8" class="text-center p-5">Không có bài viết nào phù hợp.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

@@ -1,0 +1,68 @@
+<section class="hero-section" aria-label="Banner và khẩu hiệu cá nhân">
+  <div class="container hero-container">
+    <!-- 1. KHỐI BANNER CHUẨN TỶ LỆ 1920x600 px (16:5) -->
+    <div class="banner-slider" [class.has-multiple]="banners.length > 1">
+      <div class="banner-aspect-ratio">
+        <div
+          class="banner-slide"
+          *ngFor="let item of banners; let i = index"
+          [class.active]="i === currentIndex()"
+        >
+          <a
+            *ngIf="item.linkUrl; else imgOnly"
+            [href]="item.linkUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="banner-link"
+          >
+            <img [src]="item.url" loading="eager" />
+          </a>
+          <ng-template #imgOnly>
+            <img [src]="item.url" loading="eager" />
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Nút Chuyển Banner Trước / Sau -->
+      <button
+        *ngIf="banners.length > 1"
+        type="button"
+        class="slider-btn prev-btn"
+        (click)="prevSlide()"
+        aria-label="Xem banner trước"
+      >
+        <i class="pi pi-chevron-left"></i>
+      </button>
+
+      <button
+        *ngIf="banners.length > 1"
+        type="button"
+        class="slider-btn next-btn"
+        (click)="nextSlide()"
+        aria-label="Xem banner kế tiếp"
+      >
+        <i class="pi pi-chevron-right"></i>
+      </button>
+
+      <!-- Điểm Điều Hướng (Dots) -->
+      <div class="slider-dots" *ngIf="banners.length > 1">
+        <button
+          *ngFor="let _ of banners; let idx = index"
+          type="button"
+          class="dot-btn"
+          [class.active]="idx === currentIndex()"
+          (click)="goToSlide(idx)"
+          [attr.aria-label]="'Đi đến banner ' + (idx + 1)"
+        ></button>
+      </div>
+    </div>
+
+    <!-- 2. KHỐI DANH NGÔN & SLOGAN NẰM DƯỚI BANNER -->
+    <div class="slogan-card" *ngIf="slogan">
+      <blockquote class="slogan-text">“{{ slogan }}”</blockquote>
+      <div class="slogan-author" *ngIf="author && author.trim()">
+        <span>— {{ author.trim() }} —</span>
+      </div>
+    </div>
+  </div>
+</section>

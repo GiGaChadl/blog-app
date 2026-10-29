@@ -1,0 +1,91 @@
+<div class="slogans-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Quản Lý Danh Ngôn & Slogan</h1>
+      <p class="page-subtitle">Các câu nói truyền cảm hứng hiển thị ngẫu nhiên trên trang chủ</p>
+    </div>
+    <div class="header-actions">
+      <button pButton label="Thêm Slogan Mới" icon="pi pi-plus" (click)="openCreateDialog()"></button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <p-table [value]="slogans()" [loading]="isLoading()" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Nội dung câu nói</th>
+          <th style="width: 200px">Tác giả</th>
+          <th style="width: 140px">Trạng thái</th>
+          <th style="width: 120px; text-align: center">Thao tác</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-slogan>
+        <tr>
+          <td>
+            <div class="slogan-content">
+              <i class="pi pi-quote-left text-color-secondary"></i>
+              <span class="content-text">{{ slogan.content }}</span>
+            </div>
+          </td>
+          <td>{{ slogan.author || 'Khuyết danh' }}</td>
+          <td>
+            <p-tag [value]="slogan.isActive ? 'Đang dùng' : 'Tạm dừng'" [severity]="slogan.isActive ? 'success' : 'secondary'"></p-tag>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button pButton icon="pi pi-pencil" class="p-button-text p-button-sm" (click)="openEditDialog(slogan)"></button>
+              <button pButton icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm" (click)="onDelete(slogan)"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="text-center p-5">Chưa có slogan nào.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Dialog -->
+  <p-dialog
+    [header]="isEditMode() ? 'Chỉnh Sửa Slogan' : 'Thêm Slogan Mới'"
+    [(visible)]="dialogVisible"
+    [modal]="true"
+    [style]="{ width: '480px' }"
+  >
+    <form [formGroup]="form" (ngSubmit)="onSave()" class="dialog-form">
+      <div class="field-group">
+        <label for="sloganContent" class="required">Nội dung câu nói</label>
+        <textarea
+          pInputTextarea
+          id="sloganContent"
+          formControlName="content"
+          rows="3"
+          placeholder="Nhập câu nói hoặc châm ngôn sống..."
+          class="w-full"
+        ></textarea>
+        <small *ngIf="form.get('content')?.invalid && form.get('content')?.touched" class="p-error">
+          Nội dung không được để trống.
+        </small>
+      </div>
+
+      <div class="field-group">
+        <label for="sloganAuthor">Tác giả</label>
+        <input pInputText id="sloganAuthor" formControlName="author" placeholder="Ví dụ: Steve Jobs" class="w-full" />
+      </div>
+
+      <div class="checkbox-field">
+        <p-checkbox formControlName="isActive" [binary]="true" inputId="sloganActive"></p-checkbox>
+        <label for="sloganActive" class="cursor-pointer">Kích hoạt hiển thị</label>
+      </div>
+
+      <div class="dialog-actions">
+        <button pButton type="button" label="Hủy" class="p-button-text" (click)="dialogVisible = false"></button>
+        <button pButton type="submit" label="Lưu" icon="pi pi-check" [loading]="isSaving()"></button>
+      </div>
+    </form>
+  </p-dialog>
+</div>

@@ -1,0 +1,964 @@
+/* =========================================================================
+   DESIGN TOKENS — "Sổ tay cá nhân"
+   Mọi màu/khoảng cách/typography trong app phải tham chiếu từ đây.
+   Không hard-code hex hay px rời rạc trong component .scss.
+   ========================================================================= */
+:root {
+  /* — Màu sắc (chế độ sáng — mặc định) — */
+  --color-paper: #F5F1E8;
+  --color-paper-raised: #FFFFFF;
+  --color-paper-sunken: #ECE6D8;
+  --color-ink: #22282E;
+  --color-ink-soft: #4A5158;
+  --color-ink-faint: #8A7E64;
+  --color-line: #DDD6C6;
+  --color-line-dark: rgba(245, 241, 232, 0.16);
+  --color-amber: #B9702E;
+  --color-amber-dark: #7E4A1E;
+  --color-amber-tint: #FBF3EA;
+  --color-sage: #56685A;
+  --color-margin: #9B3B3B;
+
+  /* — Ánh xạ biến tương thích PrimeNG & Layout Admin — */
+  --surface-ground: var(--color-paper);
+  --surface-card: var(--color-paper-raised);
+  --surface-overlay: var(--color-paper-raised);
+  --surface-border: var(--color-line);
+  --surface-hover: rgba(0, 0, 0, 0.04);
+  --surface-100: var(--color-paper);
+  --surface-200: var(--color-line);
+  --text-color: var(--color-ink);
+  --text-color-secondary: var(--color-ink-soft);
+  --text-color-muted: var(--color-ink-faint);
+  --primary-color: var(--color-amber);
+  --primary-color-text: #FFFFFF;
+  --primary-hover: var(--color-amber-dark);
+  --primary-50: var(--color-amber-tint);
+  --primary-600: var(--color-amber-dark);
+  --color-danger: var(--color-margin);
+  --color-success: var(--color-sage);
+  --red-500: var(--color-margin);
+  --red-50: rgba(155, 59, 59, 0.08);
+  --red-200: rgba(155, 59, 59, 0.25);
+  --green-600: var(--color-sage);
+  --blue-50: var(--color-amber-tint);
+  --blue-600: var(--color-amber);
+
+  /*
+   * Màu "nghịch đảo" dùng riêng cho footer/cookie-toast — LUÔN là nền tối + chữ sáng,
+   * bất kể site đang ở theme sáng hay tối, để 2 khối này luôn nổi bật tương phản với nền chính.
+   * KHÔNG dùng --color-ink cho việc này vì --color-ink sẽ đảo ngược ở dark mode (xem bên dưới).
+   */
+  --color-inverse-bg: #22282E;
+  --color-inverse-bg-raised: #2C333A;
+  --color-inverse-text: #F5F1E8;
+  --color-inverse-text-soft: #C7C2B4;
+  --color-inverse-border: rgba(245, 241, 232, 0.14);
+  --color-inverse-accent: #C9825A;
+
+  /* — Typography — */
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  /* — Khoảng cách theo lưới 8px — */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  /* — Bố cục — */
+  --content-max: 1180px;
+  --radius: 2px;
+}
+
+/*
+ * CHẾ ĐỘ TỐI — kích hoạt bằng class .theme-dark trên <html>, gắn/gỡ bởi ThemeService
+ * (xem core/services/theme.service.ts). Toggle qua nút ở header (app-theme-toggle).
+ * Giữ nguyên toàn bộ font/spacing, chỉ đảo bảng màu.
+ */
+html.theme-dark {
+  --color-paper: #1B1F24;
+  --color-paper-raised: #242A30;
+  --color-paper-sunken: #181C21;
+  --color-ink: #F1EDE3;
+  --color-ink-soft: #C7C2B4;
+  --color-ink-faint: #8A8578;
+  --color-line: #363C42;
+  --color-line-dark: rgba(255, 255, 255, 0.1);
+  --color-amber: #E0A165;
+  --color-amber-dark: #F0BE8C;
+  --color-amber-tint: #3A2A1B;
+  --color-sage: #8FBF9A;
+  --color-margin: #D97A7A;
+
+  /* — Ánh xạ biến tương thích PrimeNG & Layout Admin (Chế độ tối) — */
+  --surface-ground: var(--color-paper);
+  --surface-card: var(--color-paper-raised);
+  --surface-overlay: var(--color-paper-raised);
+  --surface-border: var(--color-line);
+  --surface-hover: rgba(255, 255, 255, 0.05);
+  --surface-100: var(--color-paper);
+  --surface-200: var(--color-line);
+  --text-color: var(--color-ink);
+  --text-color-secondary: var(--color-ink-soft);
+  --text-color-muted: var(--color-ink-faint);
+  --primary-color: var(--color-amber);
+  --primary-color-text: #1B1F24;
+  --primary-hover: var(--color-amber-dark);
+  --primary-50: var(--color-amber-tint);
+  --primary-600: var(--color-amber-dark);
+  --color-danger: var(--color-margin);
+  --color-success: var(--color-sage);
+  --red-500: var(--color-margin);
+  --red-50: rgba(217, 122, 122, 0.12);
+  --red-200: rgba(217, 122, 122, 0.28);
+  --green-600: var(--color-sage);
+  --blue-50: var(--color-amber-tint);
+  --blue-600: var(--color-amber);
+
+  /* Ở dark mode, footer/cookie toast dùng nền tối hơn cả nền chính một chút để vẫn phân lớp rõ */
+  --color-inverse-bg: #101317;
+  --color-inverse-bg-raised: #181C20;
+  --color-inverse-text: #F1EDE3;
+  --color-inverse-text-soft: #ABA69B;
+  --color-inverse-border: rgba(255, 255, 255, 0.08);
+  --color-inverse-accent: #E0A165;
+}
+
+/* Tránh nháy trắng/scroll ngang khi chuyển theme hoặc trên màn hình hẹp */
+html, body { overflow-x: hidden; }
+html { transition: background-color 0.2s ease; }
+body { transition: background-color 0.2s ease, color 0.2s ease; }
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 450;
+  line-height: 1.15;
+  margin: 0 0 var(--space-3);
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+
+p { margin: 0 0 var(--space-4); }
+
+a {
+  color: var(--color-amber);
+  text-decoration: none;
+}
+a:hover { color: var(--color-amber-dark); text-decoration: underline; }
+
+img { max-width: 100%; display: block; }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.eyebrow::before,
+.margin-tick::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 2px;
+  background: var(--color-margin);
+}
+
+.meta-line {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--color-ink-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.meta-line .dot::after { content: '·'; margin: 0 2px; color: var(--color-line); }
+
+.container {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+}
+@media (max-width: 640px) {
+  .container { padding: 0 var(--space-4); }
+}
+
+.section {
+  padding: var(--space-8) 0;
+}
+@media (max-width: 640px) {
+  .section { padding: var(--space-7) 0; }
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+.p-component:focus-visible {
+  outline: 2px solid var(--color-amber);
+  outline-offset: 2px;
+}
+
+/* =========================================================================
+   HỆ THỐNG BUTTON DÙNG CHUNG (thay cho các nút tự phát rải rác trước đây)
+   Dùng .btn kết hợp 1 biến thể: --primary / --secondary / --ghost / --danger
+   Dùng thêm .btn--sm để thu nhỏ. Luôn có transition + trạng thái hover/disabled rõ ràng.
+   ========================================================================= */
+.btn {
+  --_bg: var(--color-ink);
+  --_fg: var(--color-paper);
+  --_border: var(--color-ink);
+  --_bg-hover: var(--color-ink-soft);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: 1px solid var(--_border);
+  background: var(--_bg);
+  color: var(--_fg) !important;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none !important;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 1px 2px rgba(34, 40, 46, 0.08);
+
+  &:hover:not(:disabled) {
+    background: var(--_bg-hover);
+    box-shadow: 0 4px 12px rgba(34, 40, 46, 0.14);
+    transform: translateY(-1px);
+  }
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(34, 40, 46, 0.1);
+  }
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+
+  i, .pi { font-size: 13px; }
+}
+
+.btn--sm { padding: 7px 14px; font-size: 13px; border-radius: 6px; }
+
+.btn--primary {
+  --_bg: var(--color-amber);
+  --_fg: #FFFFFF;
+  --_border: var(--color-amber);
+  --_bg-hover: var(--color-amber-dark);
+}
+
+.btn--secondary {
+  --_bg: var(--color-paper-raised);
+  --_fg: var(--color-ink);
+  --_border: var(--color-line);
+  --_bg-hover: var(--color-paper);
+  box-shadow: none;
+}
+.btn--secondary:hover:not(:disabled) { border-color: var(--color-ink-faint); }
+
+.btn--ghost {
+  --_bg: transparent;
+  --_fg: var(--color-ink);
+  --_border: transparent;
+  --_bg-hover: var(--color-paper-raised);
+  box-shadow: none;
+}
+.btn--ghost:hover:not(:disabled) { transform: none; }
+
+.btn--danger {
+  --_bg: transparent;
+  --_fg: var(--color-margin);
+  --_border: transparent;
+  --_bg-hover: rgba(155, 59, 59, 0.08);
+  box-shadow: none;
+}
+.btn--danger:hover:not(:disabled) { transform: none; }
+
+/* Nút icon tròn/vuông nhỏ dùng trong header, toolbar */
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-paper-raised);
+  border: 1px solid var(--color-line);
+  color: var(--color-ink);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+
+  &:hover {
+    background: var(--color-paper);
+    border-color: var(--color-ink-faint);
+    transform: translateY(-1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =========================================================================
+   ĐỒNG BỘ NÚT PRIMENG (.p-button) VỚI HỆ THỐNG .btn CỦA USER
+   ========================================================================= */
+.p-button {
+  font-family: var(--font-body) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  padding: 8px 18px !important;
+  gap: var(--space-2) !important;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease !important;
+  box-shadow: 0 1px 2px rgba(34, 40, 46, 0.08) !important;
+
+  &:not(.p-button-outlined):not(.p-button-text):not(.p-button-danger):not(.p-button-success):not(.p-button-secondary):not(.p-button-warn) {
+    background: var(--color-amber) !important;
+    border-color: var(--color-amber) !important;
+    color: #FFFFFF !important;
+
+    &:hover:not(:disabled) {
+      background: var(--color-amber-dark) !important;
+      border-color: var(--color-amber-dark) !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(34, 40, 46, 0.14) !important;
+    }
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+
+  &.p-button-sm {
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+    border-radius: 6px !important;
+  }
+
+  &.p-button-outlined {
+    background: var(--color-paper-raised) !important;
+    color: var(--color-ink) !important;
+    border: 1px solid var(--color-line) !important;
+    box-shadow: none !important;
+
+    &:hover:not(:disabled) {
+      background: var(--color-paper) !important;
+      border-color: var(--color-ink-soft) !important;
+      transform: translateY(-1px);
+    }
+  }
+
+  &.p-button-text {
+    background: transparent !important;
+    border-color: transparent !important;
+    color: var(--color-ink-soft) !important;
+    box-shadow: none !important;
+
+    &:hover:not(:disabled) {
+      background: var(--surface-hover) !important;
+      color: var(--color-ink) !important;
+      transform: none !important;
+    }
+  }
+
+  &.p-button-danger {
+    &.p-button-text {
+      color: var(--color-margin) !important;
+      background: transparent !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+
+      &:hover:not(:disabled) {
+        background: rgba(155, 59, 59, 0.1) !important;
+      }
+    }
+    &:not(.p-button-text):not(.p-button-outlined) {
+      background: var(--color-margin) !important;
+      border-color: var(--color-margin) !important;
+      color: #FFFFFF !important;
+
+      &:hover:not(:disabled) {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+    }
+  }
+
+  &.p-button-success {
+    &.p-button-text {
+      color: var(--color-sage) !important;
+      background: transparent !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+
+      &:hover:not(:disabled) {
+        background: var(--color-sage-tint) !important;
+      }
+    }
+    &:not(.p-button-text):not(.p-button-outlined) {
+      background: var(--color-sage) !important;
+      border-color: var(--color-sage) !important;
+      color: #FFFFFF !important;
+    }
+  }
+
+  &.p-button-secondary {
+    background: var(--color-paper-raised) !important;
+    color: var(--color-ink) !important;
+    border: 1px solid var(--color-line) !important;
+    box-shadow: none !important;
+
+    &:hover:not(:disabled) {
+      background: var(--color-paper) !important;
+      border-color: var(--color-ink-faint) !important;
+    }
+  }
+}
+
+/* =========================================================================
+   ĐỒNG BỘ PRIMENG DATA TABLE & DIALOG & CONTROLS VỚI THEME SỔ TAY
+   ========================================================================= */
+.p-datatable {
+  background: var(--color-paper-raised) !important;
+  color: var(--color-ink) !important;
+
+  .p-datatable-header {
+    background: var(--color-paper-raised) !important;
+    color: var(--color-ink) !important;
+    border-color: var(--color-line) !important;
+  }
+
+  .p-datatable-thead > tr > th {
+    background: var(--color-paper) !important;
+    color: var(--color-ink-soft) !important;
+    border-color: var(--color-line) !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .p-datatable-tbody > tr {
+    background: var(--color-paper-raised) !important;
+    color: var(--color-ink) !important;
+    border-color: var(--color-line) !important;
+
+    &.p-row-odd {
+      background: var(--color-paper) !important;
+    }
+
+    > td {
+      border-color: var(--color-line) !important;
+    }
+
+    &:hover {
+      background: var(--color-amber-tint) !important;
+    }
+  }
+
+  .p-datatable-paginator-bottom {
+    background: var(--color-paper-raised) !important;
+    border-color: var(--color-line) !important;
+    color: var(--color-ink) !important;
+  }
+}
+
+.p-dialog {
+  background: var(--color-paper-raised) !important;
+  border: 1px solid var(--color-line) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25) !important;
+  color: var(--color-ink) !important;
+
+  .p-dialog-header {
+    background: var(--color-paper-raised) !important;
+    color: var(--color-ink) !important;
+    border-bottom: 1px solid var(--color-line) !important;
+    padding: 1.25rem 1.5rem !important;
+
+    .p-dialog-title {
+      font-family: var(--font-display);
+      font-weight: 500;
+      color: var(--color-ink);
+    }
+
+    .p-dialog-header-actions .p-dialog-header-close {
+      color: var(--color-ink-soft) !important;
+      &:hover {
+        background: var(--surface-hover) !important;
+        color: var(--color-ink) !important;
+      }
+    }
+  }
+
+  .p-dialog-content {
+    background: var(--color-paper-raised) !important;
+    color: var(--color-ink) !important;
+    padding: 1.5rem !important;
+  }
+
+  .p-dialog-footer {
+    background: var(--color-paper-raised) !important;
+    border-top: 1px solid var(--color-line) !important;
+    padding: 1rem 1.5rem !important;
+  }
+}
+
+/* --- Input Text, Textarea, Dropdowns, Selects & MultiSelects --- */
+.p-inputtext, .p-textarea {
+  background: var(--color-paper-raised) !important;
+  color: var(--color-ink) !important;
+  border-color: var(--color-line) !important;
+
+  &:focus, &:focus-visible, &.p-focus {
+    border-color: var(--color-amber) !important;
+    box-shadow: 0 0 0 1px var(--color-amber) !important;
+  }
+}
+
+/* --- Checkboxes (Theme adaptive for Light & Dark) --- */
+.p-checkbox {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+
+  .p-checkbox-box {
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 4px !important;
+    border: 1.5px solid var(--color-line) !important;
+    background: var(--color-paper) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.15s ease !important;
+
+    .p-checkbox-icon {
+      font-size: 11px !important;
+      width: 12px !important;
+      height: 12px !important;
+      color: transparent !important;
+      fill: transparent !important;
+      transition: all 0.15s ease;
+    }
+
+    &.p-highlight {
+      background: var(--color-amber) !important;
+      border-color: var(--color-amber) !important;
+
+      .p-checkbox-icon {
+        color: #FFFFFF !important;
+        fill: #FFFFFF !important;
+      }
+    }
+
+    &:not(.p-disabled):hover {
+      border-color: var(--color-amber) !important;
+    }
+  }
+
+  /* PrimeNG 18 container-level highlight/checked classes */
+  &.p-checkbox-checked,
+  &.p-highlight,
+  &[data-p-checked="true"],
+  &[data-p-highlight="true"] {
+    .p-checkbox-box {
+      background: var(--color-amber) !important;
+      border-color: var(--color-amber) !important;
+
+      .p-checkbox-icon {
+        color: #FFFFFF !important;
+        fill: #FFFFFF !important;
+      }
+    }
+  }
+}
+
+/* --- Dropdown, Select & MultiSelect Input Containers --- */
+.p-dropdown, .p-select, .p-multiselect {
+  background: var(--color-paper-raised) !important;
+  color: var(--color-ink) !important;
+  border: 1px solid var(--color-line) !important;
+  border-radius: 6px !important;
+  min-height: 42px !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:focus, &:focus-visible, &.p-focus, &:focus-within {
+    border-color: var(--color-amber) !important;
+    box-shadow: 0 0 0 2px var(--color-amber-tint) !important;
+  }
+
+  .p-dropdown-label, .p-select-label {
+    color: var(--color-ink) !important;
+    background: transparent !important;
+    padding: 0.5rem 0.75rem !important;
+
+    &.p-placeholder {
+      color: var(--color-ink-faint) !important;
+    }
+  }
+
+  .p-multiselect-label {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+    padding: 0.35rem 0.65rem !important;
+    color: var(--color-ink) !important;
+    background: transparent !important;
+    white-space: normal !important;
+
+    &.p-placeholder {
+      color: var(--color-ink-faint) !important;
+    }
+  }
+
+  .p-dropdown-trigger, .p-select-dropdown, .p-multiselect-trigger {
+    color: var(--color-ink-soft) !important;
+    background: transparent !important;
+    width: 2.5rem !important;
+  }
+
+  .p-dropdown-clear-icon {
+    color: var(--color-ink-faint) !important;
+  }
+
+  .p-multiselect-token, .p-chip, .p-multiselect-chip {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+    background: var(--color-amber-tint) !important;
+    color: var(--color-amber) !important;
+    border: 1px solid var(--color-line) !important;
+    border-radius: 4px !important;
+    padding: 2px 8px !important;
+    font-size: 0.825rem !important;
+    font-weight: 500 !important;
+
+    .p-multiselect-token-label, .p-chip-label, span {
+      color: var(--color-amber) !important;
+      font-weight: 600 !important;
+    }
+
+    .p-multiselect-token-icon, .p-chip-icon, .p-chip-remove-icon {
+      color: var(--color-amber) !important;
+      cursor: pointer !important;
+      font-size: 0.75rem !important;
+      &:hover {
+        color: var(--color-margin) !important;
+      }
+    }
+  }
+}
+
+/* --- Dropdown & MultiSelect Overlay Panels --- */
+.p-dropdown-panel, .p-select-overlay, .p-multiselect-panel, .p-multiselect-overlay {
+  background: var(--color-paper-raised) !important;
+  border: 1px solid var(--color-line) !important;
+  color: var(--color-ink) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28) !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  z-index: 1100 !important;
+
+  .p-dropdown-header, .p-select-header, .p-multiselect-header {
+    background: var(--color-paper-raised) !important;
+    border-bottom: 1px solid var(--color-line) !important;
+    color: var(--color-ink) !important;
+    padding: 0.625rem 0.875rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+
+    .p-checkbox {
+      margin-right: 0.25rem !important;
+      flex-shrink: 0 !important;
+    }
+
+    .p-dropdown-filter-container, .p-multiselect-filter-container {
+      flex: 1 1 auto !important;
+      position: relative !important;
+      display: flex !important;
+      align-items: center !important;
+
+      .p-dropdown-filter, .p-multiselect-filter, .p-select-filter {
+        width: 100% !important;
+        background: var(--color-paper) !important;
+        color: var(--color-ink) !important;
+        border: 1px solid var(--color-line) !important;
+        border-radius: 6px !important;
+        padding: 0.4rem 0.75rem !important;
+        padding-right: 2rem !important;
+        font-size: 0.875rem !important;
+
+        &:focus {
+          border-color: var(--color-amber) !important;
+          box-shadow: 0 0 0 2px var(--color-amber-tint) !important;
+        }
+      }
+
+      .p-dropdown-filter-icon, .p-multiselect-filter-icon {
+        position: absolute !important;
+        right: 0.75rem !important;
+        color: var(--color-ink-faint) !important;
+      }
+    }
+
+    .p-multiselect-close {
+      width: 2rem !important;
+      height: 2rem !important;
+      border-radius: 4px !important;
+      color: var(--color-ink-soft) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border: none !important;
+      background: transparent !important;
+      cursor: pointer !important;
+
+      &:hover {
+        background: var(--surface-hover) !important;
+        color: var(--color-ink) !important;
+      }
+    }
+  }
+
+  .p-dropdown-items-wrapper, .p-multiselect-items-wrapper {
+    max-height: 260px !important;
+    overflow-y: auto !important;
+  }
+
+  .p-dropdown-items, .p-select-list, .p-multiselect-items, .p-multiselect-list {
+    background: var(--color-paper-raised) !important;
+    padding: 0.35rem 0 !important;
+    margin: 0 !important;
+    list-style: none !important;
+
+    .p-dropdown-item, .p-select-option, .p-multiselect-item, .p-multiselect-option {
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.75rem !important;
+      padding: 0.6rem 0.875rem !important;
+      color: var(--color-ink) !important;
+      background: transparent !important;
+      cursor: pointer !important;
+      transition: background 0.15s ease, color 0.15s ease !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      line-height: 1.4 !important;
+
+      .p-checkbox {
+        flex-shrink: 0 !important;
+        margin: 0 !important;
+      }
+
+      span, .p-multiselect-option-label {
+        color: var(--color-ink) !important;
+        font-size: 0.9rem !important;
+      }
+
+      &:hover, &.p-focus, &:not(.p-multiselect-option-selected):hover {
+        background: var(--surface-hover) !important;
+        color: var(--color-ink) !important;
+
+        span, .p-multiselect-option-label {
+          color: var(--color-ink) !important;
+        }
+      }
+
+      &.p-highlight, &.p-multiselect-option-selected, &[aria-selected="true"] {
+        background: var(--color-amber-tint) !important;
+        color: var(--color-amber) !important;
+
+        span, .p-multiselect-option-label {
+          color: var(--color-amber) !important;
+          font-weight: 600 !important;
+        }
+      }
+    }
+  }
+
+  .p-dropdown-empty-message, .p-select-empty-message, .p-multiselect-empty-message {
+    color: var(--color-ink-faint) !important;
+    background: transparent !important;
+    padding: 0.75rem 1rem !important;
+    text-align: center !important;
+    font-size: 0.875rem !important;
+  }
+}
+
+.p-paginator {
+  background: var(--color-paper-raised) !important;
+  color: var(--color-ink) !important;
+
+  .p-paginator-pages .p-paginator-page {
+    color: var(--color-ink) !important;
+    border-radius: 6px !important;
+
+    &.p-highlight {
+      background: var(--color-amber) !important;
+      color: #FFFFFF !important;
+    }
+    &:hover:not(.p-highlight) {
+      background: var(--surface-hover) !important;
+    }
+  }
+}
+
+.p-toast {
+  z-index: 99999 !important;
+
+  .p-toast-message {
+    border-radius: 8px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(8px);
+    margin-bottom: 0.75rem !important;
+
+    .p-toast-message-content {
+      padding: 1rem 1.25rem !important;
+      display: flex !important;
+      align-items: flex-start !important;
+      gap: 0.75rem !important;
+    }
+
+    .p-toast-message-icon {
+      font-size: 1.35rem !important;
+      margin-right: 0 !important;
+      flex-shrink: 0 !important;
+    }
+
+    .p-toast-message-text {
+      flex: 1 1 auto !important;
+      margin: 0 !important;
+    }
+
+    .p-toast-summary {
+      font-weight: 700 !important;
+      font-size: 0.95rem !important;
+      line-height: 1.3 !important;
+      margin-bottom: 0.25rem !important;
+    }
+
+    .p-toast-detail {
+      font-size: 0.875rem !important;
+      line-height: 1.45 !important;
+      opacity: 0.95 !important;
+    }
+
+    .p-toast-icon-close {
+      opacity: 0.8 !important;
+      transition: opacity 0.2s;
+      &:hover {
+        opacity: 1 !important;
+      }
+    }
+
+    &.p-toast-message-error {
+      background: #991b1b !important;
+      border: 1px solid #ef4444 !important;
+      color: #ffffff !important;
+
+      .p-toast-message-icon,
+      .p-toast-summary,
+      .p-toast-detail,
+      .p-toast-icon-close {
+        color: #ffffff !important;
+      }
+    }
+
+    &.p-toast-message-success {
+      background: #14532d !important;
+      border: 1px solid #22c55e !important;
+      color: #ffffff !important;
+
+      .p-toast-message-icon,
+      .p-toast-summary,
+      .p-toast-detail,
+      .p-toast-icon-close {
+        color: #ffffff !important;
+      }
+    }
+
+    &.p-toast-message-warn {
+      background: #854d0e !important;
+      border: 1px solid #eab308 !important;
+      color: #ffffff !important;
+
+      .p-toast-message-icon,
+      .p-toast-summary,
+      .p-toast-detail,
+      .p-toast-icon-close {
+        color: #ffffff !important;
+      }
+    }
+
+    &.p-toast-message-info {
+      background: #1e3a8a !important;
+      border: 1px solid #3b82f6 !important;
+      color: #ffffff !important;
+
+      .p-toast-message-icon,
+      .p-toast-summary,
+      .p-toast-detail,
+      .p-toast-icon-close {
+        color: #ffffff !important;
+      }
+    }
+  }
+}
+
+.dialog-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--red-50);
+  border: 1px solid var(--color-danger);
+  color: var(--color-danger);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+
+  i {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+}

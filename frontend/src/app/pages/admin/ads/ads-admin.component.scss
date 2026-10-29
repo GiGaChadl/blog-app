@@ -1,0 +1,119 @@
+.ads-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  .page-header {
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: var(--color-ink);
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    .page-subtitle {
+      font-size: 0.875rem;
+      color: var(--color-ink-soft);
+      margin: 0.25rem 0 0 0;
+    }
+  }
+
+  .ads-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+    gap: 1.5rem;
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+
+    .ad-card {
+      background: var(--color-paper-raised);
+      border: 1px solid var(--color-line);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+      .ad-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+
+        .ad-title-area {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+
+          .ad-icon {
+            font-size: 1.5rem;
+            color: var(--color-amber);
+            background: var(--color-amber-tint);
+            padding: 0.75rem;
+            border-radius: 10px;
+          }
+
+          h3 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: var(--color-ink);
+            margin: 0;
+          }
+
+          .ad-desc {
+            font-size: 0.8rem;
+            color: var(--color-ink-soft);
+            margin: 0.2rem 0 0 0;
+          }
+        }
+
+        .ad-switch-area {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+
+          .status-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-ink-faint);
+
+            &.active {
+              color: var(--color-sage);
+            }
+          }
+        }
+      }
+
+      .ad-card-body {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        label {
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: var(--color-ink);
+        }
+
+        .script-textarea {
+          font-family: var(--font-mono);
+          font-size: 0.85rem;
+          background-color: var(--color-paper);
+          border: 1px solid var(--color-line);
+          color: var(--color-ink);
+          border-radius: 8px;
+        }
+      }
+
+      .ad-card-footer {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+  }
+}

@@ -1,0 +1,118 @@
+<footer class="site-footer">
+  <div class="container site-footer__top">
+    <div class="site-footer__brand">
+      <span class="eyebrow">Sổ tay cá nhân</span>
+      <h3 class="site-footer__title">{{ siteSettings.siteName() }}</h3>
+      <p class="site-footer__desc">
+        {{ siteSettings.defaultDescription() || 'Nơi tôi ghi lại những bài học, kinh nghiệm và trải nghiệm thật — không chỉnh sửa cho hoàn hảo hơn nó vốn có.' }}
+      </p>
+      <div class="site-footer__social">
+        <a
+          [href]="socials().facebook || '/gioi-thieu'"
+          [target]="socials().facebook ? '_blank' : '_self'"
+          rel="noopener noreferrer"
+          aria-label="Facebook"
+          class="social-btn"
+        >
+          <i class="pi pi-facebook"></i>
+        </a>
+        <a
+          [href]="socials().linkedin || '/gioi-thieu'"
+          [target]="socials().linkedin ? '_blank' : '_self'"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn"
+          class="social-btn"
+        >
+          <i class="pi pi-linkedin"></i>
+        </a>
+        <a
+          [href]="socials().github || '/gioi-thieu'"
+          [target]="socials().github ? '_blank' : '_self'"
+          rel="noopener noreferrer"
+          aria-label="GitHub"
+          class="social-btn"
+        >
+          <i class="pi pi-github"></i>
+        </a>
+        <a
+          *ngIf="socials().youtube"
+          [href]="socials().youtube"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="YouTube"
+          class="social-btn"
+        >
+          <i class="pi pi-youtube"></i>
+        </a>
+      </div>
+    </div>
+
+    <div class="site-footer__col">
+      <span class="eyebrow">Danh mục</span>
+      <nav class="site-footer__links">
+        <a *ngFor="let cat of topCategories" [routerLink]="['/danh-muc', cat.slug]">{{ cat.name }}</a>
+      </nav>
+    </div>
+
+    <div class="site-footer__col">
+      <span class="eyebrow">Trang</span>
+      <nav class="site-footer__links">
+        <a routerLink="/gioi-thieu">Giới thiệu &amp; Liên hệ</a>
+        <a routerLink="/tim-kiem">Tìm kiếm bài viết</a>
+        <a routerLink="/huy-dang-ky">Huỷ đăng ký nhận bài</a>
+      </nav>
+    </div>
+
+    <div class="site-footer__col site-footer__newsletter">
+      <span class="eyebrow">Nhận bài viết mới</span>
+      <p class="site-footer__newsletter-desc">
+        Mỗi khi có bài mới, gửi thẳng vào hộp thư của bạn. Không spam.
+      </p>
+
+      <form
+        class="newsletter-form"
+        *ngIf="state() !== 'success'"
+        (ngSubmit)="subscribe()"
+        novalidate
+      >
+        <input
+          pInputText
+          type="email"
+          name="email"
+          placeholder="ban@email.com"
+          [(ngModel)]="email"
+          [disabled]="state() === 'submitting'"
+        />
+        <button
+          type="submit"
+          class="btn btn--primary"
+          [disabled]="state() === 'submitting'"
+        >
+          {{ state() === 'submitting' ? 'Đang gửi…' : 'Đăng ký' }}
+        </button>
+      </form>
+
+      <p class="form-hint form-hint--error" *ngIf="state() === 'error'">
+        {{ errorMessage() }}
+      </p>
+
+      <div class="newsletter-success" *ngIf="state() === 'success'">
+        <div class="newsletter-success__content">
+          <i class="pi pi-check-circle"></i>
+          <p>
+            Đã gửi email xác nhận đến <strong>{{ email }}</strong>. Vui lòng mở hộp thư và bấm vào liên kết để hoàn tất đăng ký.
+          </p>
+        </div>
+        <button type="button" class="btn btn--ghost btn--sm newsletter-success__btn" (click)="resetForm()">Dùng email khác</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container site-footer__bottom">
+    <p>{{ siteSettings.copyright() || ('© ' + currentYear + ' ' + siteSettings.siteName() + '. Mọi bài viết là trải nghiệm cá nhân, không phải lời khuyên chuyên môn.') }}</p>
+    <div class="site-footer__legal">
+      <a routerLink="/gioi-thieu">Giới thiệu</a>
+      <a routerLink="/chinh-sach-du-lieu">Chính sách dữ liệu</a>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,231 @@
+<ng-container *ngIf="post() as p; else notFoundBlock">
+  <article class="post-detail">
+    <header class="post-detail__header">
+      <div class="container post-detail__header-inner">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a routerLink="/">Trang chủ</a>
+          <ng-container *ngFor="let cat of categoryBreadcrumb()">
+            <span>/</span>
+            <a [routerLink]="['/danh-muc', cat.slug]">{{ cat.name }}</a>
+          </ng-container>
+        </nav>
+        <div>
+          <h1>{{ p.title }}</h1>
+        </div>
+        <div class="meta-line post-detail__meta">
+          <span class="dot">{{ formattedDate(p.publishedAt) }}</span>
+          <span class="dot">{{ p.readingTimeMinutes }} phút đọc</span>
+          <span>{{ p.viewCount | number }} lượt xem</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="post-detail__hero-media">
+      <img [src]="p.thumbnailUrl" [alt]="p.title" />
+    </div>
+
+    <!-- Quảng cáo: ngay sau ảnh chính, trước khi vào nội dung/đánh giá -->
+    <div class="container post-detail__ad">
+      <app-ad-slot position="post-detail"></app-ad-slot>
+    </div>
+
+    <div class="container post-detail__layout">
+      <!-- Sidebar danh mục — giống hệt sidebar ở trang danh sách bài viết -->
+      <aside class="post-detail__sidebar">
+        <app-category-sidebar
+          [activeCategorySlug]="p.category.slug"
+        ></app-category-sidebar>
+      </aside>
+
+      <div class="post-detail__body">
+        <div class="post-detail__content" [innerHTML]="p.contentHtml"></div>
+
+        <div class="post-detail__tags" *ngIf="p.tags.length">
+          <span class="eyebrow">Tag</span>
+          <div class="tag-list">
+            <span class="tag-chip" *ngFor="let tag of p.tags">#{{ tag }}</span>
+          </div>
+        </div>
+
+        <div class="post-detail__share">
+          <span class="eyebrow">Chia sẻ</span>
+          <div class="share-buttons">
+            <a
+              [href]="shareUrl('facebook')"
+              target="_blank"
+              rel="noopener"
+              aria-label="Chia sẻ Facebook"
+              class="share-btn"
+            >
+              <i class="pi pi-facebook"></i>
+            </a>
+            <a
+              [href]="shareUrl('linkedin')"
+              target="_blank"
+              rel="noopener"
+              aria-label="Chia sẻ LinkedIn"
+              class="share-btn"
+            >
+              <i class="pi pi-linkedin"></i>
+            </a>
+            <a
+              [href]="shareUrl('zalo')"
+              target="_blank"
+              rel="noopener"
+              aria-label="Chia sẻ Zalo"
+              class="share-btn"
+            >
+              <i class="pi pi-share-alt"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bài viết liên quan -->
+    <section
+      class="section related"
+      aria-labelledby="related-heading"
+      *ngIf="relatedPosts().length"
+    >
+      <div class="container">
+        <span class="eyebrow">Đọc thêm</span>
+        <h2 id="related-heading">Bài Viết Liên Quan</h2>
+        <div class="post-grid">
+          <app-post-card
+            *ngFor="let rp of relatedPosts()"
+            [post]="rp"
+          ></app-post-card>
+        </div>
+      </div>
+    </section>
+
+    <!-- Đánh giá -->
+    <section class="section reviews" aria-labelledby="reviews-heading">
+      <div class="container reviews__layout">
+        <div class="reviews__summary">
+          <span class="eyebrow">Đánh giá</span>
+          <h2 id="reviews-heading">Bạn Đọc Nói Gì</h2>
+
+          <div class="reviews__avg" *ngIf="p.ratingCount > 0">
+            <span class="reviews__avg-number">{{
+              p.avgRating.toFixed(1)
+            }}</span>
+            <div>
+              <app-star-rating
+                [value]="p.avgRating"
+                size="md"
+              ></app-star-rating>
+              <p class="reviews__avg-count">
+                {{ p.ratingCount }} lượt đánh giá
+              </p>
+            </div>
+          </div>
+
+          <ul class="reviews__list" *ngIf="reviews().length">
+            <li class="review-item" *ngFor="let review of reviews()">
+              <!-- Chế độ hiển thị bình thường -->
+              <ng-container *ngIf="editingReviewId() !== review.id; else editReviewTpl">
+                <div class="review-item__head">
+                  <app-star-rating
+                    [value]="review.rating"
+                    size="sm"
+                  ></app-star-rating>
+                  <span class="review-item__author">{{ review.displayName }}</span>
+                  <span class="review-item__date">{{ formattedDate(review.createdAt) }}</span>
+                </div>
+                <p class="review-item__comment">{{ review.comment }}</p>
+                <div class="review-item__actions" *ngIf="review.isOwnedByCurrentSession">
+                  <button
+                    type="button"
+                    class="btn btn--ghost btn--sm review-action-btn"
+                    (click)="startEdit(review)"
+                    title="Chỉnh sửa đánh giá trong vòng 24h"
+                  >
+                    <i class="pi pi-pencil"></i> Sửa đánh giá
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn--danger btn--sm review-action-btn"
+                    (click)="deleteReview(review.id)"
+                    title="Xoá đánh giá trong vòng 24h"
+                  >
+                    <i class="pi pi-trash"></i> Xoá đánh giá
+                  </button>
+                </div>
+              </ng-container>
+
+              <!-- Form chỉnh sửa trực tiếp (trong vòng 24h) -->
+              <ng-template #editReviewTpl>
+                <div class="review-edit-form">
+                  <span class="review-edit-form__title">Chỉnh sửa đánh giá của bạn (trong vòng 24h):</span>
+                  <div class="review-edit-form__stars">
+                    <app-star-rating
+                      [value]="editRating()"
+                      [readOnly]="false"
+                      size="md"
+                      (valueChange)="editRating.set($event)"
+                    ></app-star-rating>
+                  </div>
+                  <textarea
+                    class="review-edit-form__textarea"
+                    rows="3"
+                    [ngModel]="editComment()"
+                    (ngModelChange)="editComment.set($event)"
+                    placeholder="Nhập nhận xét bài viết..."
+                  ></textarea>
+                  <div class="review-edit-form__error" *ngIf="editError()">
+                    {{ editError() }}
+                  </div>
+                  <div class="review-edit-form__buttons">
+                    <button
+                      type="button"
+                      class="btn btn--primary btn--sm"
+                      [disabled]="isSubmittingEdit()"
+                      (click)="saveEdit(review.id)"
+                    >
+                      {{ isSubmittingEdit() ? 'Đang lưu…' : 'Lưu thay đổi' }}
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn--ghost btn--sm"
+                      [disabled]="isSubmittingEdit()"
+                      (click)="cancelEdit()"
+                    >
+                      Hủy
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+          </ul>
+
+          <p class="reviews__empty" *ngIf="!reviews().length">
+            Chưa có đánh giá nào. Hãy là người đầu tiên chia sẻ cảm nhận.
+          </p>
+        </div>
+
+        <div class="reviews__form-col">
+          <div class="review-pending-alert" *ngIf="reviewPendingMsg()">
+            <i class="pi pi-check-circle"></i>
+            <span>{{ reviewPendingMsg() }}</span>
+          </div>
+
+          <app-otp-review-form
+            [postId]="p.id"
+            (submitted)="onReviewSubmitted($event)"
+          ></app-otp-review-form>
+        </div>
+      </div>
+    </section>
+  </article>
+</ng-container>
+
+<ng-template #notFoundBlock>
+  <div class="container post-not-found">
+    <span class="eyebrow">404</span>
+    <h1>Không tìm thấy bài viết này</h1>
+    <p>Bài viết có thể đã bị xoá hoặc đường dẫn không còn tồn tại.</p>
+    <a routerLink="/" class="btn btn--primary">Về trang chủ</a>
+  </div>
+</ng-template>

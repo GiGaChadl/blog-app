@@ -1,0 +1,83 @@
+<div class="admin-wrapper" [class.collapsed]="sidebarCollapsed()">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <i class="pi pi-shield brand-icon"></i>
+      <div class="brand-text" *ngIf="!sidebarCollapsed()">
+        <span class="brand-title">Blog Admin</span>
+        <span class="brand-sub">Hệ Thống Quản Trị</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ng-container *ngFor="let group of navGroups">
+        <div class="nav-group-title" *ngIf="!sidebarCollapsed()">{{ group.title }}</div>
+        <ul class="nav-list">
+          <li *ngFor="let item of group.items" class="nav-item">
+            <a
+              [routerLink]="item.route"
+              routerLinkActive="active"
+              class="nav-link"
+              [title]="item.label"
+            >
+              <i [class]="item.icon + ' nav-icon'"></i>
+              <span class="nav-label" *ngIf="!sidebarCollapsed()">{{ item.label }}</span>
+            </a>
+          </li>
+        </ul>
+      </ng-container>
+    </nav>
+
+    <div class="sidebar-footer" *ngIf="!sidebarCollapsed()">
+      <a routerLink="/" target="_blank" class="view-site-link">
+        <i class="pi pi-external-link"></i>
+        <span>Xem Trang Blog</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content Container -->
+  <div class="admin-main">
+    <!-- Topbar -->
+    <header class="admin-topbar">
+      <div class="topbar-left">
+        <button
+          type="button"
+          class="collapse-btn"
+          (click)="toggleSidebar()"
+          [title]="sidebarCollapsed() ? 'Mở rộng menu' : 'Thu gọn menu'"
+        >
+          <i [class]="sidebarCollapsed() ? 'pi pi-bars' : 'pi pi-align-left'"></i>
+        </button>
+      </div>
+
+      <div class="topbar-right">
+        <app-theme-toggle></app-theme-toggle>
+
+        <div class="admin-user-profile" *ngIf="authService.currentUser() as user">
+          <div class="user-avatar">
+            <i class="pi pi-user"></i>
+          </div>
+          <div class="user-meta">
+            <span class="username">{{ user.username }}</span>
+            <span class="user-role">{{ user.role }}</span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="logout-btn"
+          (click)="onLogout()"
+          title="Đăng xuất"
+        >
+          <i class="pi pi-sign-out"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Content Body -->
+    <div class="admin-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

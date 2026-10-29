@@ -1,0 +1,47 @@
+.subscribers-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: var(--color-ink);
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    .page-subtitle {
+      font-size: 0.875rem;
+      color: var(--color-ink-soft);
+      margin: 0.25rem 0 0 0;
+    }
+  }
+
+  .table-container {
+    background: var(--color-paper-raised);
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+    .email-cell {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--color-ink);
+      font-weight: 500;
+    }
+
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+    }
+  }
+}

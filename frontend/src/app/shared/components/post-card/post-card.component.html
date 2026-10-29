@@ -1,0 +1,29 @@
+<article class="post-card">
+  <div class="post-card__media">
+    <img [src]="post.thumbnailUrl" [alt]="post.title" loading="lazy" />
+    <span class="post-card__category">{{ post.category.name }}</span>
+  </div>
+
+  <div class="post-card__body">
+    <div class="meta-line">
+      <span class="dot">{{ formattedDate(post.publishedAt) }}</span>
+      <span>{{ post.readingTimeMinutes }} phút đọc</span>
+    </div>
+
+    <h3 class="post-card__title">{{ post.title }}</h3>
+    <p class="post-card__excerpt">{{ post.excerpt }}</p>
+
+    <div class="post-card__footer">
+      <span class="post-card__rating" *ngIf="post.ratingCount > 0">
+        <i class="pi pi-star-fill"></i> {{ post.avgRating.toFixed(1) }}
+        <span class="post-card__rating-count">({{ post.ratingCount }})</span>
+      </span>
+      <a
+        [routerLink]="['/bai-viet', post.slug]"
+        class="post-card__cta"
+      >
+        Xem chi tiết <i class="pi pi-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,104 @@
+<div class="reviews-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Kiểm Duyệt Đánh Giá & Bình Luận</h1>
+      <p class="page-subtitle">Xem, duyệt hoặc ẩn các đánh giá của độc giả trên bài viết</p>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-label">Trạng thái duyệt:</div>
+    <p-dropdown
+      [options]="statusOptions"
+      [(ngModel)]="selectedStatus"
+      (onChange)="loadReviews()"
+      styleClass="w-200px"
+    ></p-dropdown>
+  </div>
+
+  <div class="table-container">
+    <p-table
+      [value]="reviews()"
+      [loading]="isLoading()"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="totalRecords()"
+      responsiveLayout="scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Người gửi</th>
+          <th style="width: 120px">Điểm sao</th>
+          <th>Nội dung nhận xét</th>
+          <th style="width: 130px">Trạng thái</th>
+          <th style="width: 130px">Ngày gửi</th>
+          <th style="width: 140px; text-align: center">Thao tác</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-review>
+        <tr>
+          <td>
+            <div class="author-cell">
+              <span class="font-medium">{{ review.email || review.authorEmail || review.authorName || 'Độc giả' }}</span>
+              <small class="text-color-secondary" *ngIf="review.postTitle">Bài viết: {{ review.postTitle }}</small>
+            </div>
+          </td>
+          <td>
+            <div class="rating-badge">
+              <i class="pi pi-star-fill text-yellow-500"></i>
+              <span>{{ review.rating }}/5</span>
+            </div>
+          </td>
+          <td>
+            <div class="comment-content">{{ review.comment || 'Không có bình luận chữ.' }}</div>
+          </td>
+          <td>
+            <p-tag
+              [value]="review.status === 'Visible' || review.status === 'approved' ? 'Đã duyệt' : (review.status === 'Flagged' || review.status === 'pending' ? 'Gắn cờ' : 'Chờ duyệt')"
+              [severity]="review.status === 'Visible' || review.status === 'approved' ? 'success' : (review.status === 'Flagged' || review.status === 'pending' ? 'danger' : 'warn')"
+            ></p-tag>
+          </td>
+          <td>{{ review.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>
+            <div class="action-buttons">
+              <button
+                *ngIf="review.status !== 'Visible' && review.status !== 'approved'"
+                pButton
+                type="button"
+                icon="pi pi-check"
+                class="p-button-text p-button-success p-button-sm"
+                title="Duyệt hiển thị"
+                (click)="updateStatus(review, 'Visible')"
+              ></button>
+              <button
+                *ngIf="review.status !== 'Hidden' && review.status !== 'rejected'"
+                pButton
+                type="button"
+                icon="pi pi-eye-slash"
+                class="p-button-text p-button-warning p-button-sm"
+                title="Ẩn đánh giá"
+                (click)="updateStatus(review, 'Hidden')"
+              ></button>
+              <button
+                pButton
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-text p-button-danger p-button-sm"
+                title="Xóa vĩnh viễn"
+                (click)="onDelete(review)"
+              ></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center p-5">Không có đánh giá nào.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

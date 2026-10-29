@@ -1,0 +1,69 @@
+<nav class="cat-sidebar" aria-label="Danh mục bài viết">
+  <span class="eyebrow">Danh mục</span>
+
+  <a
+    [routerLink]="['/danh-muc', 'tat-ca']"
+    [class.is-active]="activeCategorySlug === 'tat-ca'"
+    class="cat-link cat-link--root"
+  >Tất cả</a>
+
+  <!-- Cấp 1: danh mục cha -->
+  <div class="cat-node" *ngFor="let parent of categoryTree">
+    <div class="cat-row">
+      <a
+        [routerLink]="['/danh-muc', parent.slug]"
+        [class.is-active]="activeCategorySlug === parent.slug"
+        class="cat-link cat-link--parent"
+      >{{ parent.name }}</a>
+      <button
+        type="button"
+        class="cat-toggle"
+        *ngIf="parent.children.length"
+        (click)="toggleParent(parent.id)"
+        [attr.aria-label]="isParentExpanded(parent.id) ? 'Thu gọn' : 'Mở rộng'"
+        [attr.aria-expanded]="isParentExpanded(parent.id)"
+      >
+        <i class="pi" [ngClass]="isParentExpanded(parent.id) ? 'pi-chevron-down' : 'pi-chevron-right'"></i>
+      </button>
+    </div>
+
+    <!-- Cấp 2: danh mục con — mỗi mục cũng tự thu/mở để lộ cấp 3 bên dưới -->
+    <div class="cat-children" *ngIf="parent.children.length && isParentExpanded(parent.id)">
+      <div class="cat-node" *ngFor="let child of parent.children">
+        <div class="cat-row">
+          <a
+            [routerLink]="['/danh-muc', child.slug]"
+            [class.is-active]="activeCategorySlug === child.slug"
+            class="cat-link cat-link--child"
+          >{{ child.name }}</a>
+          <button
+            type="button"
+            class="cat-toggle"
+            *ngIf="child.children.length"
+            (click)="toggleChild(child.id)"
+            [attr.aria-label]="isChildExpanded(child.id) ? 'Thu gọn' : 'Mở rộng'"
+            [attr.aria-expanded]="isChildExpanded(child.id)"
+          >
+            <i class="pi" [ngClass]="isChildExpanded(child.id) ? 'pi-chevron-down' : 'pi-chevron-right'"></i>
+          </button>
+        </div>
+
+        <!-- Cấp 3: danh mục cháu — tối đa 5 mục gần nhất, còn lại xem qua trang danh mục cấp 2 -->
+        <div class="cat-grandchildren" *ngIf="child.children.length && isChildExpanded(child.id)">
+          <a
+            *ngFor="let grandchild of visibleGrandchildren(child)"
+            [routerLink]="['/danh-muc', grandchild.slug]"
+            [class.is-active]="activeCategorySlug === grandchild.slug"
+            class="cat-link cat-link--grandchild"
+          >{{ grandchild.name }}</a>
+
+          <a
+            *ngIf="hasMoreGrandchildren(child)"
+            [routerLink]="['/danh-muc', child.slug]"
+            class="cat-link cat-link--more"
+          >Xem tiếp…</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

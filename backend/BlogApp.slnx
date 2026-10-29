@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <File Path="PROJECT-MASTER-GUIDE.md" />
+    <File Path="AGENTS.md" />
+    <Project Path="src/BlogApp.Api/BlogApp.Api.csproj" />
+    <Project Path="src/BlogApp.Application/BlogApp.Application.csproj" />
+    <Project Path="src/BlogApp.Domain/BlogApp.Domain.csproj" />
+    <Project Path="src/BlogApp.Infrastructure/BlogApp.Infrastructure.csproj" />
+    <Project Path="tests/BlogApp.Application.Tests/BlogApp.Application.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,525 @@
+<div class="post-edit-page">
+  <div class="page-header">
+    <div class="header-left">
+      <a routerLink="/admin/posts" class="back-link">
+        <i class="pi pi-arrow-left"></i> Quay lại danh sách
+      </a>
+      <h1 class="page-title">{{ isEditMode() ? 'Chỉnh Sửa Bài Viết' : 'Thêm Bài Viết Mới' }}</h1>
+    </div>
+    <div class="header-actions">
+      <button
+        pButton
+        type="button"
+        label="Lưu Bài Viết"
+        icon="pi pi-check"
+        (click)="onSubmit()"
+        [loading]="isSubmitting()"
+      ></button>
+    </div>
+  </div>
+
+  <form [formGroup]="form" class="edit-form-grid">
+    <!-- Main Content Column -->
+    <div class="main-column">
+      <div class="form-card">
+        <div class="field-group">
+          <label for="title" class="required">Tiêu đề bài viết</label>
+          <input
+            pInputText
+            id="title"
+            type="text"
+            formControlName="title"
+            (blur)="generateSlugFromTitle()"
+            placeholder="Nhập tiêu đề hấp dẫn cho bài viết..."
+            class="w-full title-input"
+          />
+          <small *ngIf="form.get('title')?.invalid && form.get('title')?.touched" class="p-error">
+            Tiêu đề không được để trống.
+          </small>
+        </div>
+
+        <div class="field-group">
+          <label for="slug" class="required">Đường dẫn thân thiện (Slug)</label>
+          <div class="slug-input-wrapper">
+            <span class="slug-prefix">/bai-viet/</span>
+            <input
+              pInputText
+              id="slug"
+              type="text"
+              formControlName="slug"
+              placeholder="duong-dan-than-thien"
+              class="w-full"
+            />
+          </div>
+          <small *ngIf="form.get('slug')?.invalid && form.get('slug')?.touched" class="p-error">
+            Slug không được để trống.
+          </small>
+        </div>
+
+        <div class="field-group">
+          <label for="summary">Tóm tắt ngắn (Excerpt)</label>
+          <textarea
+            pInputTextarea
+            id="summary"
+            formControlName="summary"
+            rows="3"
+            placeholder="Mô tả ngắn gọn nội dung cốt lõi của bài viết..."
+            class="w-full"
+          ></textarea>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label-row">
+            <label class="required">Nội dung bài viết (Soạn thảo văn bản, bảng & tải ảnh)</label>
+            <span class="editor-subtext">Hỗ trợ đầy đủ In đậm, In nghiêng, Tiêu đề H2-H4, Bảng biểu, Link và Tải ảnh trực tiếp</span>
+          </div>
+
+          <!-- TipTap Toolbar -->
+          <div class="tiptap-toolbar">
+            <!-- Text Formatting -->
+            <div class="toolbar-group">
+              <button
+                type="button"
+                class="tb-btn"
+                [class.active]="editor?.isActive('bold')"
+                (click)="toggleBold()"
+                title="In đậm (Ctrl+B)"
+              >
+                <i class="pi pi-bold"></i>
+              </button>
+              <button
+                type="button"
+                class="tb-btn"
+                [class.active]="editor?.isActive('italic')"
+                (click)="toggleItalic()"
+                title="In nghiêng (Ctrl+I)"
+              >
+                <i class="pi pi-italic"></i>
+              </button>
+              <button
+                type="button"
+                class="tb-btn"
+                [class.active]="editor?.isActive('strike')"
+                (click)="toggleStrike()"
+                title="Gạch ngang"
+              >
+                <s>S</s>
+              </button>
+            </div>
+
+            <!-- Headings -->
+            <div class="toolbar-group">
+              <button
+                type="button"
+                class="tb-btn"
+                [class.active]="editor?.isActive('heading', { level: 2 })"
+                (click)="toggleHeading(2)"
+                title="Tiêu đề H2"
+              >
+                H2
+              </button>
+              <button
+                type="button"
+                class="tb-btn"
+                [class.active]="editor?.isActive('heading', { level: 3 })"
+                (click)="toggleHeading(3)"
+                title="Tiêu đề H3"
+              >
+                H3
+              </button>
+              <button
+                type="button"
+                class="tb-btn"
+                [class.active]="editor?.isActive('heading', { level: 4 })"
+                (click)="toggleHeading(4)"
+                title="Tiêu đề H4"
+              >
+                H4
+              </button>
+            </div>
+
+            <!-- Lists & Quote -->
+            <div class="toolbar-group">
+              <button
+                type="button"
+                class="tb-btn"
+                [class.active]="editor?.isActive('bulletList')"
+                (click)="toggleBulletList()"
+                title="Danh sách dấu chấm"
+              >
+                <i class="pi pi-list"></i>
+              </button>
+              <button
+                type="button"
+                class="tb-btn"
+                [class.active]="editor?.isActive('orderedList')"
+                (click)="toggleOrderedList()"
+                title="Danh sách số"
+              >
+                <i class="pi pi-sort-numeric-down"></i>
+              </button>
+              <button
+                type="button"
+                class="tb-btn"
+                [class.active]="editor?.isActive('blockquote')"
+                (click)="toggleBlockquote()"
+                title="Trích dẫn đoạn văn"
+              >
+                <i class="pi pi-comment"></i>
+              </button>
+              <button
+                type="button"
+                class="tb-btn"
+                [class.active]="editor?.isActive('codeBlock')"
+                (click)="toggleCodeBlock()"
+                title="Khối code"
+              >
+                <i class="pi pi-code"></i>
+              </button>
+            </div>
+
+            <!-- Links -->
+            <div class="toolbar-group">
+              <button
+                type="button"
+                class="tb-btn"
+                [class.active]="editor?.isActive('link')"
+                (click)="setLink()"
+                title="Chèn / Sửa liên kết (Link)"
+              >
+                <i class="pi pi-link"></i>
+              </button>
+            </div>
+
+            <!-- Image Upload & Media Library -->
+            <div class="toolbar-group">
+              <input
+                #editorImageInput
+                type="file"
+                accept="image/*"
+                style="display: none"
+                (change)="onEditorImageFileSelected($event)"
+              />
+              <button
+                type="button"
+                class="tb-btn tb-btn-primary"
+                (click)="editorImageInput.click()"
+                [disabled]="isUploadingEditorImage()"
+                title="Tải ảnh trực tiếp từ máy tính lên chèn vào nội dung"
+              >
+                <i [class]="isUploadingEditorImage() ? 'pi pi-spin pi-spinner' : 'pi pi-upload'"></i>
+                <span class="btn-text">{{ isUploadingEditorImage() ? 'Đang tải...' : 'Tải ảnh lên' }}</span>
+              </button>
+
+              <button
+                type="button"
+                class="tb-btn"
+                (click)="openMediaPicker('editor')"
+                title="Chọn ảnh từ Thư viện Media"
+              >
+                <i class="pi pi-images"></i>
+                <span class="btn-text">Thư viện</span>
+              </button>
+            </div>
+
+            <!-- Tables -->
+            <div class="toolbar-group table-controls">
+              <button
+                type="button"
+                class="tb-btn"
+                (click)="insertTable()"
+                title="Chèn bảng biểu 3x3"
+              >
+                <i class="pi pi-table"></i>
+                <span class="btn-text">Bảng</span>
+              </button>
+              <ng-container *ngIf="editor?.isActive('table')">
+                <button
+                  type="button"
+                  class="tb-btn tb-btn-sub"
+                  (click)="addColumnAfter()"
+                  title="Thêm cột bên phải"
+                >
+                  + Cột
+                </button>
+                <button
+                  type="button"
+                  class="tb-btn tb-btn-sub"
+                  (click)="deleteColumn()"
+                  title="Xóa cột hiện tại"
+                >
+                  - Cột
+                </button>
+                <button
+                  type="button"
+                  class="tb-btn tb-btn-sub"
+                  (click)="addRowAfter()"
+                  title="Thêm dòng bên dưới"
+                >
+                  + Dòng
+                </button>
+                <button
+                  type="button"
+                  class="tb-btn tb-btn-sub"
+                  (click)="deleteRow()"
+                  title="Xóa dòng hiện tại"
+                >
+                  - Dòng
+                </button>
+                <button
+                  type="button"
+                  class="tb-btn tb-btn-sub btn-danger-action"
+                  (click)="deleteTable()"
+                  title="Xóa toàn bộ bảng"
+                >
+                  <i class="pi pi-trash"></i>
+                </button>
+              </ng-container>
+            </div>
+
+            <!-- Undo / Redo -->
+            <div class="toolbar-group history-controls">
+              <button
+                type="button"
+                class="tb-btn"
+                (click)="undo()"
+                title="Hoàn tác (Undo)"
+              >
+                <i class="pi pi-undo"></i>
+              </button>
+              <button
+                type="button"
+                class="tb-btn"
+                (click)="redo()"
+                title="Làm lại (Redo)"
+              >
+                <i class="pi pi-refresh"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- TipTap Editor Workspace -->
+          <div
+            class="tiptap-editor-wrapper"
+            [class.border-error]="form.get('content')?.invalid && form.get('content')?.touched"
+          >
+            <div #editorContainer class="tiptap-prosemirror-container"></div>
+          </div>
+
+          <small *ngIf="form.get('content')?.invalid && form.get('content')?.touched" class="p-error">
+            Nội dung bài viết không được để trống.
+          </small>
+        </div>
+      </div>
+
+      <!-- SEO Settings Accordion/Card -->
+      <div class="form-card">
+        <h3 class="card-title"><i class="pi pi-search"></i> Cấu hình Tối ưu Tìm kiếm (SEO Metadata)</h3>
+        
+        <div class="field-group">
+          <label for="metaTitle">Meta Title (Tiêu đề SEO)</label>
+          <input
+            pInputText
+            id="metaTitle"
+            type="text"
+            formControlName="metaTitle"
+            placeholder="Để trống sẽ lấy theo tiêu đề bài viết"
+            class="w-full"
+          />
+        </div>
+
+        <div class="field-group">
+          <label for="metaDescription">Meta Description (Mô tả SEO)</label>
+          <textarea
+            pInputTextarea
+            id="metaDescription"
+            formControlName="metaDescription"
+            rows="2"
+            placeholder="Mô tả tóm lược hiển thị trên Google..."
+            class="w-full"
+          ></textarea>
+        </div>
+
+        <div class="field-group">
+          <label for="metaKeywords">Meta Keywords</label>
+          <input
+            pInputText
+            id="metaKeywords"
+            type="text"
+            formControlName="metaKeywords"
+            placeholder="tu-khoa-1, tu-khoa-2"
+            class="w-full"
+          />
+        </div>
+
+        <div class="field-group">
+          <label for="canonicalUrl">Canonical URL</label>
+          <input
+            pInputText
+            id="canonicalUrl"
+            type="text"
+            formControlName="canonicalUrl"
+            placeholder="https://example.com/bai-viet/duong-dan"
+            class="w-full"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar Properties Column -->
+    <div class="side-column">
+      <!-- Publishing Options -->
+      <div class="form-card">
+        <h3 class="card-title"><i class="pi pi-cog"></i> Xuất bản</h3>
+
+        <div class="field-group">
+          <label class="required">Trạng thái bài viết</label>
+          <p-dropdown
+            [options]="statusOptions"
+            formControlName="status"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="w-full"
+          ></p-dropdown>
+        </div>
+
+        <div class="field-group">
+          <label for="categoryId" class="required">Chuyên mục (Bắt buộc Cấp 3)</label>
+          <p-dropdown
+            [options]="categoryOptions()"
+            formControlName="categoryId"
+            optionLabel="label"
+            optionValue="value"
+            optionDisabled="disabled"
+            placeholder="-- Chọn chuyên mục cấp 3 --"
+            styleClass="w-full"
+          ></p-dropdown>
+          <small class="text-xs text-color-secondary block mt-1">
+            <i class="pi pi-info-circle"></i> Quy tắc hệ thống: Bài viết chỉ được phép lưu vào danh mục con cấp 3.
+          </small>
+          <small *ngIf="form.get('categoryId')?.invalid && form.get('categoryId')?.touched" class="p-error block mt-1">
+            Vui lòng chọn một chuyên mục cấp 3 hợp lệ.
+          </small>
+        </div>
+
+        <div class="field-group">
+          <label>Thẻ Tags</label>
+          <p-multiSelect
+            [options]="tags()"
+            formControlName="tagIds"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Gắn thẻ cho bài..."
+            styleClass="w-full"
+            display="chip"
+          ></p-multiSelect>
+        </div>
+      </div>
+
+      <!-- Thumbnail Media -->
+      <div class="form-card">
+        <h3 class="card-title required"><i class="pi pi-image"></i> Ảnh đại diện (Thumbnail) *</h3>
+        
+        <input #thumbFileInput type="file" accept="image/*" style="display:none" (change)="onThumbnailFileSelected($event)" />
+
+        <div class="media-preview-box" *ngIf="selectedThumbnailUrl(); else noThumb">
+          <img [src]="selectedThumbnailUrl()" alt="Thumbnail" />
+          <button
+            type="button"
+            class="remove-media-btn"
+            (click)="removeSelectedMedia('thumbnail')"
+            title="Xóa ảnh"
+          >
+            <i class="pi pi-times"></i>
+          </button>
+        </div>
+        <ng-template #noThumb>
+          <div
+            class="empty-media-placeholder mb-2"
+            [class.border-danger]="form.get('thumbnailMediaId')?.invalid && form.get('thumbnailMediaId')?.touched"
+          >
+            <i class="pi pi-cloud-upload"></i>
+            <span>Chưa có ảnh đại diện</span>
+          </div>
+        </ng-template>
+
+        <div class="action-buttons-grid flex gap-2 mt-2">
+          <button
+            pButton
+            type="button"
+            [label]="selectedThumbnailUrl() ? 'Đổi từ máy' : 'Tải từ máy'"
+            icon="pi pi-upload"
+            class="p-button-outlined p-button-sm flex-1"
+            [loading]="isUploadingThumbnail()"
+            (click)="thumbFileInput.click()"
+          ></button>
+          <button
+            pButton
+            type="button"
+            [label]="selectedThumbnailUrl() ? 'Đổi từ thư viện' : 'Chọn thư viện'"
+            icon="pi pi-images"
+            class="p-button-outlined p-button-sm flex-1"
+            (click)="openMediaPicker('thumbnail')"
+          ></button>
+        </div>
+
+        <small *ngIf="form.get('thumbnailMediaId')?.invalid && form.get('thumbnailMediaId')?.touched" class="p-error block mt-2">
+          Ảnh đại diện là bắt buộc. Vui lòng tải từ máy hoặc chọn ảnh từ thư viện.
+        </small>
+      </div>
+
+      <!-- OgImage Social Share -->
+      <div class="form-card">
+        <h3 class="card-title"><i class="pi pi-share-alt"></i> Ảnh chia sẻ MXH (OG Image)</h3>
+        
+        <input #ogFileInput type="file" accept="image/*" style="display:none" (change)="onOgImageFileSelected($event)" />
+
+        <div class="media-preview-box" *ngIf="selectedOgImageUrl(); else noOg">
+          <img [src]="selectedOgImageUrl()" alt="OG Image" />
+          <button
+            type="button"
+            class="remove-media-btn"
+            (click)="removeSelectedMedia('ogImage')"
+            title="Xóa ảnh"
+          >
+            <i class="pi pi-times"></i>
+          </button>
+        </div>
+        <ng-template #noOg>
+          <div class="empty-media-placeholder mb-2">
+            <i class="pi pi-share-alt"></i>
+            <span>Chưa có ảnh chia sẻ MXH</span>
+          </div>
+        </ng-template>
+
+        <div class="action-buttons-grid flex gap-2 mt-2">
+          <button
+            pButton
+            type="button"
+            [label]="selectedOgImageUrl() ? 'Đổi từ máy' : 'Tải từ máy'"
+            icon="pi pi-upload"
+            class="p-button-outlined p-button-sm flex-1"
+            [loading]="isUploadingOgImage()"
+            (click)="ogFileInput.click()"
+          ></button>
+          <button
+            pButton
+            type="button"
+            [label]="selectedOgImageUrl() ? 'Đổi từ thư viện' : 'Chọn thư viện'"
+            icon="pi pi-images"
+            class="p-button-outlined p-button-sm flex-1"
+            (click)="openMediaPicker('ogImage')"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Media Picker Dialog -->
+  <app-media-picker-dialog
+    [header]="mediaPickerTarget === 'thumbnail' ? 'Chọn Ảnh Đại Diện Cho Bài Viết' : (mediaPickerTarget === 'ogImage' ? 'Chọn Ảnh Chia Sẻ Mạng Xã Hội' : 'Chèn Ảnh Vào Nội Dung Bài Viết')"
+    [visible]="showMediaPicker()"
+    (visibleChange)="showMediaPicker.set($event)"
+    (select)="selectMediaItem($event)"
+  ></app-media-picker-dialog>
+</div>

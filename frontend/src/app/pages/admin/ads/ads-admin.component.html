@@ -1,0 +1,54 @@
+<div class="ads-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Cấu Hình Google AdSense & Banner Quảng Cáo</h1>
+      <p class="page-subtitle">Quản lý mã script hiển thị tại 4 vị trí quảng cáo tiêu chuẩn trên blog</p>
+    </div>
+  </div>
+
+  <div class="ads-grid" *ngIf="!isLoading()">
+    <div *ngFor="let ad of ads()" class="ad-card">
+      <div class="ad-card-header">
+        <div class="ad-title-area">
+          <i [class]="getPositionInfo(ad.position).icon + ' ad-icon'"></i>
+          <div>
+            <h3>{{ getPositionInfo(ad.position).label }}</h3>
+            <p class="ad-desc">{{ getPositionInfo(ad.position).desc }}</p>
+          </div>
+        </div>
+
+        <div class="ad-switch-area">
+          <p-inputSwitch [(ngModel)]="ad.isActive"></p-inputSwitch>
+          <span class="status-label" [class.active]="ad.isActive">
+            {{ ad.isActive ? 'Đang bật' : 'Đang tắt' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="ad-card-body">
+        <label>Google AdSense Slot ID (hoặc dán toàn bộ thẻ &lt;ins&gt;)</label>
+        <textarea
+          pInputTextarea
+          [(ngModel)]="ad.adsenseSlotId"
+          rows="5"
+          placeholder="Nhập Ad Slot ID (VD: 1234567890) hoặc dán toàn bộ thẻ <ins class='adsbygoogle' data-ad-slot='...'>..."
+          class="w-full font-mono script-textarea"
+        ></textarea>
+        <small class="text-color-secondary mt-1 block">
+          Hệ thống sẽ tự động nhận diện và trích xuất đúng mã data-ad-slot để tích hợp với Google AdSense.
+        </small>
+      </div>
+
+      <div class="ad-card-footer">
+        <button
+          pButton
+          label="Lưu Cấu Hình"
+          icon="pi pi-check"
+          (click)="onSaveAd(ad)"
+          [loading]="savingPosition() === ad.position"
+          class="p-button-sm"
+        ></button>
+      </div>
+    </div>
+  </div>
+</div>

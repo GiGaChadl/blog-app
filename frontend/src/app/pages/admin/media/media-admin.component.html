@@ -1,0 +1,107 @@
+<div class="media-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Thư Viện Hình Ảnh & Media</h1>
+      <p class="page-subtitle">Tải lên từ máy tính, quản lý và sử dụng hình ảnh trong bài viết, banner và dự án</p>
+    </div>
+    <div class="header-actions">
+      <label class="upload-btn-label">
+        <i class="pi pi-upload"></i>
+        <span>Tải Ảnh Mới Lên</span>
+        <input type="file" (change)="onFileSelected($event)" accept="image/*" class="hidden-file-input" />
+      </label>
+    </div>
+  </div>
+
+  <!-- Image Standards & Specs Section -->
+  <div class="standards-card">
+    <div class="standards-header">
+      <i class="pi pi-info-circle text-primary"></i>
+      <h3>Quy chuẩn kỹ thuật & Tiêu chuẩn kích thước hình ảnh</h3>
+    </div>
+    <div class="standards-grid">
+      <div class="standard-item">
+        <div class="item-title"><i class="pi pi-image"></i> Ảnh Đại Diện Bài Viết (Thumbnail)</div>
+        <div class="item-spec">Chuẩn: <strong>1200 x 675 px</strong> (Tỷ lệ 16:9, tối thiểu 800 x 450 px)</div>
+        <div class="item-size">Dung lượng khuyến nghị: <strong>&lt; 500 KB</strong> (Tối đa 10 MB)</div>
+        <div class="item-desc">Đảm bảo rõ nét trên desktop, điện thoại và danh sách bài viết</div>
+      </div>
+
+      <div class="standard-item">
+        <div class="item-title"><i class="pi pi-desktop"></i> Ảnh Banner Trang Chủ</div>
+        <div class="item-spec">Chuẩn: <strong>1920 x 600 px</strong> (Tỷ lệ 16:5 hoặc 3:1, tối thiểu 1200 x 400 px)</div>
+        <div class="item-size">Dung lượng khuyến nghị: <strong>&lt; 800 KB</strong> (Tối đa 10 MB)</div>
+        <div class="item-desc">Tỷ lệ siêu rộng hiển thị cân đối ở đầu trang chủ không bị vỡ hạt</div>
+      </div>
+
+      <div class="standard-item">
+        <div class="item-title"><i class="pi pi-share-alt"></i> Ảnh Chia Sẻ MXH (OG Image)</div>
+        <div class="item-spec">Chuẩn: <strong>1200 x 630 px</strong> (Tỷ lệ 1.91:1)</div>
+        <div class="item-size">Dung lượng khuyến nghị: <strong>&lt; 500 KB</strong> (Tối đa 10 MB)</div>
+        <div class="item-desc">Chuẩn hiển thị khi chia sẻ link lên Facebook, Zalo, Twitter, LinkedIn</div>
+      </div>
+
+      <div class="standard-item">
+        <div class="item-title"><i class="pi pi-file-check"></i> Định Dạng & Giới Hạn Máy Chủ</div>
+        <div class="item-spec">Định dạng hỗ trợ: <strong>.webp, .jpg, .jpeg, .png, .svg, .gif</strong></div>
+        <div class="item-size">Giới hạn tối đa hệ thống: <strong>10 MB / ảnh</strong></div>
+        <div class="item-desc">Khuyên dùng định dạng WebP để tối ưu tốc độ tải trang và trải nghiệm người dùng</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload State Banner -->
+  <div class="upload-loading-banner" *ngIf="isUploading()">
+    <i class="pi pi-spin pi-spinner"></i>
+    <span>Đang tải tệp hình ảnh lên máy chủ...</span>
+  </div>
+
+  <!-- Media Grid -->
+  <div class="media-grid" *ngIf="!isLoading()">
+    <div *ngFor="let media of mediaList()" class="media-card">
+      <div class="media-thumb" (click)="openPreview(media)">
+        <img [src]="media.fileUrl" [alt]="media.fileName" loading="lazy" />
+        <div class="hover-overlay">
+          <i class="pi pi-eye"></i>
+        </div>
+      </div>
+
+      <div class="media-info">
+        <span class="file-name" [title]="media.fileName">{{ media.fileName }}</span>
+        <div class="file-meta">
+          <span>{{ ((media.fileSizeBytes || 0) / 1024) | number:'1.0-1' }} KB</span>
+          <span *ngIf="media.width && media.height">{{ media.width }}x{{ media.height }}</span>
+        </div>
+      </div>
+
+      <div class="media-actions">
+        <button pButton icon="pi pi-copy" class="p-button-text p-button-sm" (click)="copyUrl(media)" title="Sao chép link"></button>
+        <button pButton icon="pi pi-trash" class="p-button-text p-button-danger p-button-sm" (click)="onDelete(media)" title="Xóa"></button>
+      </div>
+    </div>
+
+    <div *ngIf="mediaList().length === 0" class="empty-media-box">
+      <i class="pi pi-images"></i>
+      <p>Chưa có hình ảnh nào trong thư viện.</p>
+    </div>
+  </div>
+
+  <!-- Preview Dialog -->
+  <p-dialog
+    header="Xem Trước Hình Ảnh"
+    [(visible)]="previewDialogVisible"
+    [modal]="true"
+    [style]="{ width: '600px', maxWidth: '90vw' }"
+  >
+    <div *ngIf="previewMedia() as m" class="preview-content">
+      <img [src]="m.fileUrl" [alt]="m.fileName" class="preview-img" />
+      <div class="preview-details">
+        <div><strong>Tên file:</strong> {{ m.fileName }}</div>
+        <div><strong>Định dạng:</strong> {{ m.fileType }}</div>
+        <div><strong>Dung lượng:</strong> {{ ((m.fileSizeBytes || 0) / 1024) | number:'1.0-1' }} KB</div>
+        <div *ngIf="m.width"><strong>Kích thước:</strong> {{ m.width }} x {{ m.height }} px</div>
+        <div><strong>URL:</strong> <code class="url-code">{{ m.fileUrl }}</code></div>
+      </div>
+    </div>
+  </p-dialog>
+</div>

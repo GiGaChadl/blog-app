@@ -1,0 +1,674 @@
+<div class="settings-page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Cấu Hình & Thiết Lập Hệ Thống</h1>
+      <p class="page-subtitle">
+        Quản lý thông tin liên hệ, SEO mặc định và thông số máy chủ Email gửi
+        tin
+      </p>
+    </div>
+  </div>
+
+  <!-- Custom Modern Tabs Navigation -->
+  <div class="settings-tabs">
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="activeTab() === 'contact'"
+      (click)="activeTab.set('contact')"
+    >
+      <i class="pi pi-user"></i>
+      <span>Thông Tin Liên Hệ & Tác Giả</span>
+    </button>
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="activeTab() === 'seo'"
+      (click)="activeTab.set('seo')"
+    >
+      <i class="pi pi-search"></i>
+      <span>Cấu Hình SEO Mặc Định</span>
+    </button>
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="activeTab() === 'smtp'"
+      (click)="activeTab.set('smtp')"
+    >
+      <i class="pi pi-envelope"></i>
+      <span>Máy Chủ Email (SMTP)</span>
+    </button>
+  </div>
+
+  <!-- TAB 1: CONTACT INFO -->
+  <div class="tab-content-panel" *ngIf="activeTab() === 'contact'">
+    <form
+      [formGroup]="contactForm"
+      (ngSubmit)="saveContact()"
+      class="settings-form"
+    >
+      <div class="form-section">
+        <h3>Thông Tin Cơ Bản & Tác Giả</h3>
+
+        <div class="form-row">
+          <div class="field-group flex-1">
+            <label for="contactAuthor">Tên tác giả / Bút danh (Author)</label>
+            <input
+              pInputText
+              id="contactAuthor"
+              formControlName="authorName"
+              placeholder="Ví dụ: Tuấn Nguyễn"
+              class="w-full"
+            />
+            <small class="text-xs text-muted-color"
+              >Hiển thị dưới câu danh ngôn Hero Banner trang chủ và chữ ký bài
+              viết.</small
+            >
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field-group flex-1">
+            <label for="contactEmail" class="required"
+              >Email liên hệ chính</label
+            >
+            <input
+              pInputText
+              id="contactEmail"
+              formControlName="email"
+              placeholder="admin@example.com"
+              class="w-full"
+            />
+            <small
+              *ngIf="
+                contactForm.get('email')?.invalid &&
+                contactForm.get('email')?.touched
+              "
+              class="p-error"
+            >
+              Email không hợp lệ.
+            </small>
+          </div>
+
+          <div class="field-group flex-1">
+            <label for="contactPhone">Số điện thoại</label>
+            <input
+              pInputText
+              id="contactPhone"
+              formControlName="phone"
+              placeholder="0901234567"
+              class="w-full"
+            />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="contactAddress">Địa chỉ / Khu vực</label>
+          <input
+            pInputText
+            id="contactAddress"
+            formControlName="address"
+            placeholder="Hà Nội, Việt Nam"
+            class="w-full"
+          />
+        </div>
+
+        <div class="field-group">
+          <label for="contactBio">Tiểu sử ngắn (Bio)</label>
+          <textarea
+            pInputTextarea
+            id="contactBio"
+            formControlName="bio"
+            rows="2"
+            placeholder="Một vài câu ngắn gọn giới thiệu về bạn, chức danh, sở thích..."
+            class="w-full"
+          ></textarea>
+          <small class="text-xs text-muted-color"
+            >Đoạn tóm tắt ngắn về tác giả, hiển thị ở sidebar hoặc thông tin tác
+            giả bài viết.</small
+          >
+        </div>
+
+        <div class="field-group">
+          <label for="contactAbout"
+            >Bài viết giới thiệu chi tiết (Giới thiệu / About Story)</label
+          >
+          <textarea
+            pInputTextarea
+            id="contactAbout"
+            formControlName="about"
+            rows="5"
+            placeholder="Câu chuyện về bạn, lý do lập blog, hành trình học tập và kinh nghiệm..."
+            class="w-full"
+          ></textarea>
+          <small class="text-xs text-muted-color"
+            >Hiển thị ở phần giới thiệu của trang Giới thiệu
+            (/gioi-thieu).</small
+          >
+        </div>
+
+        <div class="field-group">
+          <label for="contactCopyright">Bản quyền chân trang (Copyright)</label>
+          <input
+            pInputText
+            id="contactCopyright"
+            formControlName="copyright"
+            placeholder="© 2026 Nhật Ký Của Tôi. Mọi bài viết là trải nghiệm cá nhân, không phải lời khuyên chuyên môn."
+            class="w-full"
+          />
+          <small class="text-xs text-muted-color"
+            >Hiển thị ở dòng chân trang (Footer) của toàn bộ website.</small
+          >
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Liên Kết Mạng Xã Hội</h3>
+
+        <div class="form-row">
+          <div class="field-group flex-1">
+            <label for="fbUrl"
+              ><i class="pi pi-facebook text-blue-600"></i> Facebook URL</label
+            >
+            <input
+              pInputText
+              id="fbUrl"
+              formControlName="facebookUrl"
+              placeholder="https://facebook.com/..."
+              class="w-full"
+            />
+          </div>
+          <div class="field-group flex-1">
+            <label for="ghUrl"><i class="pi pi-github"></i> GitHub URL</label>
+            <input
+              pInputText
+              id="ghUrl"
+              formControlName="githubUrl"
+              placeholder="https://github.com/..."
+              class="w-full"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field-group flex-1">
+            <label for="inUrl"
+              ><i class="pi pi-linkedin text-blue-700"></i> LinkedIn URL</label
+            >
+            <input
+              pInputText
+              id="inUrl"
+              formControlName="linkedinUrl"
+              placeholder="https://linkedin.com/in/..."
+              class="w-full"
+            />
+          </div>
+          <div class="field-group flex-1">
+            <label for="ytUrl"
+              ><i class="pi pi-youtube text-red-600"></i> YouTube URL</label
+            >
+            <input
+              pInputText
+              id="ytUrl"
+              formControlName="youtubeUrl"
+              placeholder="https://youtube.com/@..."
+              class="w-full"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button
+          pButton
+          type="submit"
+          label="Lưu Thông Tin Liên Hệ"
+          icon="pi pi-check"
+          [loading]="isSaving()"
+        ></button>
+      </div>
+    </form>
+  </div>
+
+  <!-- TAB 2: SEO SETTINGS -->
+  <div class="tab-content-panel" *ngIf="activeTab() === 'seo'">
+    <form [formGroup]="seoForm" (ngSubmit)="saveSeo()" class="settings-form">
+      <div class="form-section">
+        <h3>Thẻ Tiêu Đề & Mô Tả Mặc Định</h3>
+
+        <div class="form-row">
+          <div class="field-group flex-1">
+            <label for="siteName" class="required"
+              >Tên Website (Site Name)</label
+            >
+            <input
+              pInputText
+              id="siteName"
+              formControlName="siteName"
+              placeholder="Nhật Ký Của Tôi"
+              class="w-full"
+            />
+            <small
+              *ngIf="
+                seoForm.get('siteName')?.invalid &&
+                seoForm.get('siteName')?.touched
+              "
+              class="p-error"
+            >
+              Tên website không được để trống.
+            </small>
+          </div>
+
+          <div class="field-group flex-1">
+            <label for="defaultTitle" class="required"
+              >Tiêu đề trang chủ mặc định</label
+            >
+            <input
+              pInputText
+              id="defaultTitle"
+              formControlName="defaultTitle"
+              placeholder="Nhật Ký Của Tôi — Blog Chia Sẻ Lập Trình"
+              class="w-full"
+            />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="defaultDesc">Thẻ Meta Description mặc định</label>
+          <textarea
+            pInputTextarea
+            id="defaultDesc"
+            formControlName="defaultDescription"
+            rows="3"
+            placeholder="Mô tả tóm tắt blog khi chia sẻ hoặc tìm kiếm trên Google..."
+            class="w-full"
+          ></textarea>
+        </div>
+
+        <div class="field-group">
+          <label for="defaultKeywords">Thẻ Meta Keywords mặc định</label>
+          <input
+            pInputText
+            id="defaultKeywords"
+            formControlName="defaultKeywords"
+            placeholder="blog lap trinh, csharp, dotnet, angular"
+            class="w-full"
+          />
+        </div>
+
+        <div class="field-group">
+          <label for="defaultOg"
+            >Ảnh chia sẻ Open Graph mặc định (OG Image)</label
+          >
+          <div
+            class="p-3 mb-2 border-round surface-ground text-sm text-color-secondary line-height-3"
+          >
+            <i class="pi pi-info-circle text-primary mr-1"></i>
+            <strong>Ảnh Open Graph là gì?</strong> Khi bạn gửi link website lên
+            <strong>Facebook, Zalo, Messenger, LinkedIn, Telegram...</strong>,
+            mạng xã hội sẽ quét ảnh này để làm ảnh bìa xem trước (thumbnail).
+            Kích thước chuẩn khuyến nghị: <strong>1200 × 630 px</strong> (tỷ lệ
+            1.91:1).
+          </div>
+          <div class="flex gap-2 mb-2">
+            <input
+              pInputText
+              id="defaultOg"
+              formControlName="defaultOgImage"
+              placeholder="https://.../og-default.jpg"
+              class="flex-1"
+            />
+            <input
+              #ogFileInput
+              type="file"
+              accept="image/*"
+              (change)="onOgImageSelected($event)"
+              style="display: none"
+            />
+            <button
+              pButton
+              type="button"
+              label="Tải ảnh lên"
+              icon="pi pi-upload"
+              class="p-button-outlined"
+              [loading]="isUploadingOgImage()"
+              (click)="ogFileInput.click()"
+            ></button>
+          </div>
+          <div
+            class="og-preview mt-2"
+            *ngIf="seoForm.get('defaultOgImage')?.value"
+          >
+            <img
+              [src]="seoForm.get('defaultOgImage')?.value"
+              alt="Xem trước OG Image"
+              style="
+                max-height: 160px;
+                max-width: 100%;
+                object-fit: cover;
+                border-radius: 6px;
+                border: 1px solid var(--surface-border);
+              "
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field-group flex-1">
+            <label for="siteLogoUrl"
+              ><i class="pi pi-image"></i> Logo Website</label
+            >
+            <div class="flex gap-2 mb-2">
+              <input
+                pInputText
+                id="siteLogoUrl"
+                formControlName="siteLogoUrl"
+                placeholder="https://.../logo.png"
+                class="flex-1"
+              />
+              <input
+                #logoFileInput
+                type="file"
+                accept="image/*"
+                (change)="onLogoSelected($event)"
+                style="display: none"
+              />
+              <button
+                pButton
+                type="button"
+                label="Tải lên"
+                icon="pi pi-upload"
+                class="p-button-outlined"
+                [loading]="isUploadingLogo()"
+                (click)="logoFileInput.click()"
+              ></button>
+            </div>
+            <small class="text-xs text-muted-color"
+              >Hiển thị trên thanh Header. Khuyến nghị ảnh nền trong suốt
+              (PNG/SVG).</small
+            >
+            <div
+              class="logo-preview mt-2"
+              *ngIf="seoForm.get('siteLogoUrl')?.value"
+            >
+              <img
+                [src]="seoForm.get('siteLogoUrl')?.value"
+                alt="Xem trước Logo"
+                style="
+                  max-height: 40px;
+                  width: auto;
+                  object-fit: contain;
+                  padding: 4px;
+                  border: 1px dashed var(--surface-border);
+                  border-radius: 4px;
+                "
+              />
+            </div>
+          </div>
+
+          <div class="field-group flex-1">
+            <label for="faviconUrl"
+              ><i class="pi pi-bookmark"></i> Icon Nhỏ Đường Dẫn /
+              Favicon</label
+            >
+            <div class="flex gap-2 mb-2">
+              <input
+                pInputText
+                id="faviconUrl"
+                formControlName="faviconUrl"
+                placeholder="https://.../favicon.ico"
+                class="flex-1"
+              />
+              <input
+                #faviconFileInput
+                type="file"
+                accept="image/*,.ico"
+                (change)="onFaviconSelected($event)"
+                style="display: none"
+              />
+              <button
+                pButton
+                type="button"
+                label="Tải lên"
+                icon="pi pi-upload"
+                class="p-button-outlined"
+                [loading]="isUploadingFavicon()"
+                (click)="faviconFileInput.click()"
+              ></button>
+            </div>
+            <small class="text-xs text-muted-color"
+              >Icon nhỏ hiển thị trên tab trình duyệt (khuyến nghị .ico/.png
+              32×32 hoặc 64×64 px).</small
+            >
+            <div
+              class="favicon-preview mt-2"
+              *ngIf="seoForm.get('faviconUrl')?.value"
+            >
+              <img
+                [src]="seoForm.get('faviconUrl')?.value"
+                alt="Xem trước Favicon"
+                style="
+                  width: 32px;
+                  height: 32px;
+                  object-fit: contain;
+                  padding: 2px;
+                  border: 1px solid var(--surface-border);
+                  border-radius: 4px;
+                "
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Công Cụ Tìm Kiếm & Bot Crawlers</h3>
+
+        <div class="field-group">
+          <label for="gVerify"
+            >Mã xác minh Google Search Console (Site Verification)</label
+          >
+          <input
+            pInputText
+            id="gVerify"
+            formControlName="googleSiteVerification"
+            placeholder="google-site-verification-code..."
+            class="w-full"
+          />
+        </div>
+
+        <div class="field-group">
+          <label for="robotsTxt">Nội dung tệp Robots.txt</label>
+          <textarea
+            pInputTextarea
+            id="robotsTxt"
+            formControlName="robotsTxtContent"
+            rows="5"
+            class="w-full font-mono text-sm"
+            placeholder="User-agent: *&#10;Disallow: /admin/"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button
+          pButton
+          type="submit"
+          label="Lưu Cấu Hình SEO"
+          icon="pi pi-check"
+          [loading]="isSaving()"
+        ></button>
+      </div>
+    </form>
+  </div>
+
+  <!-- TAB 3: SMTP SETTINGS -->
+  <div class="tab-content-panel" *ngIf="activeTab() === 'smtp'">
+    <form [formGroup]="smtpForm" (ngSubmit)="saveSmtp()" class="settings-form">
+      <div class="form-section">
+        <div class="section-header-with-action">
+          <div>
+            <h3>Cấu Hình Máy Chủ Gửi Thư SMTP</h3>
+            <p class="section-desc">
+              Dùng để gửi mã OTP, thông báo bài viết mới tới subscribers
+            </p>
+          </div>
+          <button
+            pButton
+            type="button"
+            label="Gửi Thử Nghiệm (Test Email)"
+            icon="pi pi-send"
+            class="p-button-outlined p-button-sm"
+            (click)="openTestMailDialog()"
+          ></button>
+        </div>
+
+        <div class="form-row">
+          <div class="field-group flex-2">
+            <label for="smtpHost" class="required">Máy chủ SMTP (Host)</label>
+            <input
+              pInputText
+              id="smtpHost"
+              formControlName="host"
+              placeholder="smtp.gmail.com"
+              class="w-full"
+            />
+          </div>
+
+          <div class="field-group flex-1">
+            <label for="smtpPort" class="required">Cổng kết nối (Port)</label>
+            <input
+              pInputText
+              id="smtpPort"
+              type="number"
+              formControlName="port"
+              placeholder="587"
+              class="w-full"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field-group flex-1">
+            <label for="smtpUser" class="required"
+              >Tài khoản SMTP (Username)</label
+            >
+            <input
+              pInputText
+              id="smtpUser"
+              formControlName="username"
+              placeholder="your-email@gmail.com"
+              class="w-full"
+            />
+          </div>
+
+          <div class="field-group flex-1">
+            <label for="smtpPass">Mật khẩu ứng dụng (Password)</label>
+            <input
+              pInputText
+              id="smtpPass"
+              type="password"
+              formControlName="password"
+              placeholder="Nhập để thay đổi mật khẩu..."
+              class="w-full"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field-group flex-1">
+            <label for="senderEmail" class="required"
+              >Email người gửi (From Email)</label
+            >
+            <input
+              pInputText
+              id="senderEmail"
+              formControlName="senderEmail"
+              placeholder="no-reply@myblog.com"
+              class="w-full"
+            />
+          </div>
+
+          <div class="field-group flex-1">
+            <label for="senderName" class="required"
+              >Tên hiển thị người gửi (From Name)</label
+            >
+            <input
+              pInputText
+              id="senderName"
+              formControlName="senderName"
+              placeholder="Nhật Ký Của Tôi"
+              class="w-full"
+            />
+          </div>
+        </div>
+
+        <div class="field-group flex-row-center mt-2">
+          <p-inputSwitch
+            formControlName="enableSsl"
+            inputId="enableSsl"
+          ></p-inputSwitch>
+          <label for="enableSsl" class="cursor-pointer"
+            >Kích hoạt mã hóa SSL / TLS</label
+          >
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button
+          pButton
+          type="submit"
+          label="Lưu Cấu Hình SMTP"
+          icon="pi pi-check"
+          [loading]="isSaving()"
+        ></button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Test Mail Modal Dialog -->
+  <p-dialog
+    header="Gửi Email Thử Nghiệm"
+    [(visible)]="testMailDialogVisible"
+    [modal]="true"
+    [style]="{ width: '450px' }"
+  >
+    <div class="dialog-test-mail">
+      <p>
+        Hệ thống sẽ gửi một bức thư mẫu qua cấu hình SMTP hiện tại để xác minh
+        kết nối hoạt động bình thường.
+      </p>
+
+      <div class="field-group mt-3">
+        <label for="testEmail" class="font-semibold"
+          >Địa chỉ email nhận thư kiểm tra:</label
+        >
+        <input
+          pInputText
+          id="testEmail"
+          [(ngModel)]="testRecipientEmail"
+          placeholder="your-test-email@example.com"
+          class="w-full mt-1"
+        />
+      </div>
+
+      <div class="dialog-actions mt-4">
+        <button
+          pButton
+          type="button"
+          label="Đóng"
+          class="p-button-text"
+          (click)="testMailDialogVisible.set(false)"
+        ></button>
+        <button
+          pButton
+          type="button"
+          label="Bắt Đầu Gửi"
+          icon="pi pi-send"
+          (click)="sendTestMail()"
+          [loading]="isSendingTest()"
+        ></button>
+      </div>
+    </div>
+  </p-dialog>
+</div>

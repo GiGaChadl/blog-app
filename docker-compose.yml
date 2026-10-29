@@ -1,0 +1,68 @@
+services:
+  # ------------------------------------------------
+  # 1. Database Service (PostgreSQL 16)
+  # ------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: blog_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: blog-database-schema
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-123456}
+    volumes:
+      # Mount file script SQL để tự khởi tạo bảng lúc tạo container
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      # Volume lưu trữ dữ liệu vĩnh viễn
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d blog-database-schema"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ------------------------------------------------
+  # 2. Backend Web API (.NET 10)
+  # ------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-josephkhai}/blog-backend:latest
+    container_name: blog_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=blog-database-schema;Username=postgres;Password=${DB_PASSWORD:-123456}"
+      Jwt__Secret: "${JWT_SECRET:-DOI_CHUOI_NAY_THANH_KHOA_BI_MAT_DAI_TOI_THIEU_32_KY_TU_123456}"
+      Jwt__Issuer: "BlogApp.Api"
+      Jwt__Audience: "BlogApp.Admin"
+      Jwt__ExpiryMinutes: 60
+    volumes:
+      - blog_uploads:/app/wwwroot/uploads
+    ports:
+      - "5135:8080"
+
+  # ------------------------------------------------
+  # 3. Frontend Web App (Angular + Nginx)
+  # ------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME:-josephkhai}/blog-frontend:latest
+    container_name: blog_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
+volumes:
+  pgdata:
+  blog_uploads:
